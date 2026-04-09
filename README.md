@@ -107,5 +107,5 @@ This project is licensed under the [MIT License](LICENSE).
 ---
 
 <div align="center">
-  <p>Made with ☕ by <a href="https://github.com/frdev">frdev</a></p>
+  <p>Made with ☕ by <a href="https://github.com/HermesEsp">Hermes</a></p>
 </div>
