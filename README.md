@@ -59,7 +59,7 @@ src/
 
 ```bash
 # Clone the repository
-git clone https://github.com/frdev/activerecall-flashcards.git
+git clone https://github.com/HermesEsp/activerecall-flashcards.git
 cd activerecall-flashcards
 
 # Install dependencies
