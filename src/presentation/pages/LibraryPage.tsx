@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { 
-  Plus, Search, Edit2, Trash2, CheckCircle2, 
+import {
+  Plus, Search, Edit2, Trash2, CheckCircle2,
   ChevronRight, Filter, Eye, X, ChevronDown,
   Bold, Italic, Underline as UnderlineIcon, Code, Info, RotateCcw
 } from 'lucide-react';
@@ -80,19 +80,19 @@ export const LibraryPage: React.FC = () => {
     const el = target === 'front' ? frontRef.current : backRef.current;
     const setter = target === 'front' ? setFront : setBack;
     const value = target === 'front' ? front : back;
-    
+
     if (!el) return;
 
     const start = el.selectionStart;
     const end = el.selectionEnd;
     const selected = value.substring(start, end);
-    
+
     const before = value.substring(0, start);
     const after = value.substring(end);
-    
+
     const newValue = `${before}${prefix}${selected}${suffix}${after}`;
     setter(newValue);
-    
+
     setTimeout(() => {
       el.focus();
       const newPos = selected ? start + prefix.length + selected.length + suffix.length : start + prefix.length;
@@ -104,7 +104,7 @@ export const LibraryPage: React.FC = () => {
     if ((e.metaKey || e.ctrlKey) && e.key === 'b') { e.preventDefault(); wrapSelection('**', '**'); }
     if ((e.metaKey || e.ctrlKey) && e.key === 'i') { e.preventDefault(); wrapSelection('*', '*'); }
     if ((e.metaKey || e.ctrlKey) && e.key === 'u') { e.preventDefault(); wrapSelection('__', '__'); }
-    
+
     if (e.key === '[' && front.endsWith('[')) {
       e.preventDefault();
       const newText = front.slice(0, -1) + '{{}}';
@@ -133,7 +133,7 @@ export const LibraryPage: React.FC = () => {
   const handleCapture = (e?: React.FormEvent) => {
     e?.preventDefault();
     if (!front.trim() || !back.trim()) return;
-    
+
     if (editingCard) {
       updateCard(editingCard.id, front, back, captureCategory);
       setEditingCard(null);
@@ -188,23 +188,23 @@ export const LibraryPage: React.FC = () => {
 
       {/* Turbo Capture Area */}
       <div className="mb-16">
-        <div className="bg-zinc-100 dark:bg-zinc-900/50 p-1 md:p-1.5 rounded-3xl border-2 border-dashed border-zinc-200 dark:border-zinc-800 focus-within:border-zinc-900 dark:focus-within:border-zinc-500 transition-all">
-          <div className="bg-white dark:bg-zinc-900 rounded-[22px] p-6 md:p-8 shadow-sm">
+        <div className="bg-zinc-100 dark:bg-zinc-900/50 p-1 md:p-1.5 rounded-2xl border-2 border-dashed border-zinc-200 dark:border-zinc-800 focus-within:border-zinc-900 dark:focus-within:border-zinc-500 transition-all">
+          <div className="bg-white dark:bg-zinc-900 rounded-xl p-6 md:p-8 shadow-sm">
             <div className="flex flex-col gap-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <div className="space-y-3">
+                <div className="space-y-4">
                   <div className="h-10 flex items-center justify-between px-1">
-                    <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">{t.library.cardFront}</label>
+                    <label className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400">{t.library.cardFront}</label>
                     <div className="flex items-center gap-1">
-                      <button type="button" onClick={() => wrapSelection('**', '**')} className="p-1.5 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-lg transition-colors text-zinc-500" title={`${t.library.bold} (Cmd+B)`}><Bold size={14} /></button>
-                      <button type="button" onClick={() => wrapSelection('*', '*')} className="p-1.5 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-lg transition-colors text-zinc-500" title={`${t.library.italic} (Cmd+I)`}><Italic size={14} /></button>
-                      <button type="button" onClick={() => wrapSelection('__', '__')} className="p-1.5 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-lg transition-colors text-zinc-500" title={`${t.library.underline} (Cmd+U)`}><UnderlineIcon size={14} /></button>
-                      <button type="button" onClick={() => wrapSelection('`', '`')} className="p-1.5 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-lg transition-colors text-zinc-500" title={t.library.code}><Code size={14} /></button>
-                      <div className="w-px h-3 bg-zinc-200 dark:bg-zinc-800 mx-1" />
-                      <button 
-                        type="button" 
-                        onClick={() => wrapSelection('{{', '}}')} 
-                        className="text-[10px] font-black bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 px-2 py-1 rounded-lg hover:scale-105 transition-all shadow-sm"
+                      <button type="button" onClick={() => wrapSelection('**', '**')} className="p-1.5 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-md transition-colors text-zinc-500" title={`${t.library.bold} (Cmd+B)`}><Bold size={14} /></button>
+                      <button type="button" onClick={() => wrapSelection('*', '*')} className="p-1.5 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-md transition-colors text-zinc-500" title={`${t.library.italic} (Cmd+I)`}><Italic size={14} /></button>
+                      <button type="button" onClick={() => wrapSelection('__', '__')} className="p-1.5 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-md transition-colors text-zinc-500" title={`${t.library.underline} (Cmd+U)`}><UnderlineIcon size={14} /></button>
+                      <button type="button" onClick={() => wrapSelection('`', '`')} className="p-1.5 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-md transition-colors text-zinc-500" title={t.library.code}><Code size={14} /></button>
+                      <div className="w-px h-3 bg-zinc-200 dark:bg-zinc-800 mx-1.5" />
+                      <button
+                        type="button"
+                        onClick={() => wrapSelection('{{', '}}')}
+                        className="text-[9px] font-black bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 px-2.5 py-1.5 rounded-md hover:scale-105 transition-all shadow-sm"
                         title={t.library.clozeHint}
                       >
                         {'{ }'} {t.library.clozeLabel}
@@ -217,13 +217,13 @@ export const LibraryPage: React.FC = () => {
                     onChange={(e) => setFront(e.target.value)}
                     onKeyDown={handleFrontKeyDown}
                     placeholder={t.library.frontPlaceholder}
-                    className="w-full bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-5 text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-zinc-900 dark:focus:ring-white transition-all outline-none resize-none min-h-[140px] text-lg font-medium leading-relaxed"
+                    className="w-full bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl p-6 text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-zinc-900 dark:focus:ring-white transition-all outline-none resize-none min-h-[160px] text-lg font-semibold leading-relaxed"
                   />
                 </div>
 
-                <div className="space-y-3">
+                <div className="space-y-4">
                   <div className="h-10 flex items-center px-1">
-                    <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">{t.library.cardBack}</label>
+                    <label className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400">{t.library.cardBack}</label>
                   </div>
                   <textarea
                     ref={backRef}
@@ -231,23 +231,25 @@ export const LibraryPage: React.FC = () => {
                     onChange={(e) => setBack(e.target.value)}
                     onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleCapture(); } }}
                     placeholder={t.library.backPlaceholder}
-                    className="w-full bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-5 text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-zinc-900 dark:focus:ring-white transition-all outline-none resize-none min-h-[140px] text-base leading-relaxed"
+                    className="w-full bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl p-6 text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-zinc-900 dark:focus:ring-white transition-all outline-none resize-none min-h-[160px] text-lg font-semibold leading-relaxed"
                   />
                 </div>
               </div>
 
-              <div className="flex flex-col md:flex-row gap-4 items-center">
-                <input 
-                  type="text" 
-                  value={captureCategory} 
-                  onChange={(e) => setCaptureCategory(e.target.value)}
-                  className="w-full md:w-48 bg-zinc-50 dark:bg-zinc-800 px-4 py-2.5 rounded-xl text-xs font-bold focus:ring-2 focus:ring-zinc-900/10 outline-none border border-zinc-200 dark:border-zinc-800" 
-                  placeholder={t.library.categoryLabel}
-                />
+              <div className="flex flex-col md:flex-row gap-6 items-center">
+                <div className="relative w-full md:w-56">
+                  <input
+                    type="text"
+                    value={captureCategory}
+                    onChange={(e) => setCaptureCategory(e.target.value)}
+                    className="w-full bg-zinc-50 dark:bg-zinc-800 border-none px-5 py-4 rounded-lg text-xs font-black uppercase tracking-widest focus:ring-2 focus:ring-zinc-900/10 outline-none transition-all placeholder:text-zinc-400"
+                    placeholder={t.library.categoryLabel}
+                  />
+                </div>
                 <button
                   onClick={handleCapture}
                   disabled={!front || !back}
-                  className="w-full md:flex-grow bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 py-4 px-8 rounded-2xl font-black text-sm uppercase tracking-[0.1em] hover:scale-[1.01] transition-all disabled:opacity-20 shadow-xl flex items-center justify-center gap-3"
+                  className="w-full md:flex-grow bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 py-4 px-8 rounded-xl font-black text-xs uppercase tracking-[0.2em] hover:scale-[1.01] transition-all disabled:opacity-20 shadow-xl flex items-center justify-center gap-3"
                 >
                   <Plus size={18} strokeWidth={3} />
                   {editingCard ? t.library.update : t.library.createButton}
@@ -266,7 +268,7 @@ export const LibraryPage: React.FC = () => {
               placeholder={t.library.search}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="w-full pl-12 pr-4 py-3.5 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl focus:ring-2 focus:ring-zinc-900 outline-none text-zinc-900 dark:text-zinc-100 shadow-sm"
+              className="w-full pl-12 pr-4 py-3.5 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl focus:ring-2 focus:ring-zinc-900 outline-none text-zinc-900 dark:text-zinc-100 shadow-sm"
             />
           </div>
           <CategoryFilter categories={categories} selected={selectedCategory} onSelect={setSelectedCategory} t={t} />
@@ -277,7 +279,7 @@ export const LibraryPage: React.FC = () => {
           <div key={category} className="mb-12">
             <div className="flex items-center gap-3 mb-6">
               <div className="h-px flex-grow bg-zinc-200 dark:bg-zinc-800" />
-              <div className="flex items-center gap-2 px-4 py-1.5 bg-zinc-100 dark:bg-zinc-800 rounded-full">
+              <div className="flex items-center gap-2 px-4 py-1.5 bg-zinc-100 dark:bg-zinc-800 rounded-lg">
                 <span className="text-[10px] font-black uppercase tracking-widest text-zinc-500">
                   {category === 'All' ? t.library.allCategories : category}
                 </span>
@@ -290,7 +292,7 @@ export const LibraryPage: React.FC = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {categoryCards.map((card) => (
-                <div key={card.id} className="group bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-6 hover:shadow-xl transition-all flex flex-col min-h-[220px]">
+                <div key={card.id} className="group bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl p-6 hover:shadow-xl transition-all flex flex-col min-h-[220px]">
                   <div className="flex justify-between items-start mb-4">
                     <span className="text-[10px] font-black uppercase tracking-[0.2em] px-2.5 py-1 bg-zinc-50 dark:bg-zinc-800 text-zinc-400 rounded-md">
                       {card.category}
@@ -320,15 +322,11 @@ export const LibraryPage: React.FC = () => {
         )}
 
         {/* Methodology Tip - REFINED */}
-        <div className="mt-20 p-6 md:p-8 bg-zinc-100 dark:bg-zinc-900/40 rounded-2xl border border-zinc-200 dark:border-zinc-800 flex flex-col md:flex-row gap-5 items-start">
-          <div className="w-10 h-10 bg-white dark:bg-zinc-800 rounded-xl flex items-center justify-center text-zinc-500 shrink-0">
-            <Info size={20} />
-          </div>
-          <div className="space-y-1">
-            <h4 className="text-sm font-black uppercase tracking-widest text-zinc-900 dark:text-zinc-100">{t.study.howItWorks.title}</h4>
-            <p className="text-sm text-zinc-500 dark:text-zinc-400 leading-relaxed font-medium">
-              {t.study.howItWorks.desc}
-            </p>
+        <div className="mt-12 p-6 bg-zinc-100 dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800 flex gap-4 items-start">
+          <Info className="text-zinc-400 shrink-0" size={20} />
+          <div className="text-sm text-zinc-600 dark:text-zinc-400 leading-relaxed">
+            <p className="font-bold text-zinc-900 dark:text-zinc-100 mb-1">{t.study.howItWorks.title}</p>
+            {t.study.howItWorks.desc}
           </div>
         </div>
       </div>
@@ -338,17 +336,17 @@ export const LibraryPage: React.FC = () => {
         {viewingCard && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setViewingCard(null)} className="absolute inset-0 bg-zinc-900/60 backdrop-blur-sm" />
-            <motion.div initial={{ opacity: 0, scale: 0.9, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.9, y: 20 }} className="relative w-full max-w-lg bg-zinc-50 dark:bg-zinc-900 rounded-3xl p-8 md:p-12 shadow-2xl">
+            <motion.div initial={{ opacity: 0, scale: 0.9, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.9, y: 20 }} className="relative w-full max-w-lg bg-zinc-50 dark:bg-zinc-900 rounded-2xl p-8 md:p-12 shadow-2xl">
               <button onClick={() => setViewingCard(null)} className="absolute top-6 right-6 p-2 text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100" title={t.library.cancel}><X size={24} /></button>
               <div className="flex flex-col items-center gap-8 text-center">
-                 <div className="space-y-1">
-                   <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400">{t.library.quickPreview}</h3>
-                   <p className="text-xs font-bold text-emerald-500">{viewingCard.category}</p>
-                 </div>
-                 <div className="w-full">
-                   <Card card={viewingCard} isFlipped={isFlipped} onFlip={() => setIsFlipped(!isFlipped)} />
-                 </div>
-                 <p className="text-[10px] font-black uppercase tracking-widest text-zinc-400">{t.library.tapToFlip}</p>
+                <div className="space-y-1">
+                  <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400">{t.library.quickPreview}</h3>
+                  <p className="text-xs font-bold text-emerald-500">{viewingCard.category}</p>
+                </div>
+                <div className="w-full">
+                  <Card card={viewingCard} isFlipped={isFlipped} onFlip={() => setIsFlipped(!isFlipped)} />
+                </div>
+                <p className="text-[10px] font-black uppercase tracking-widest text-zinc-400">{t.library.tapToFlip}</p>
               </div>
             </motion.div>
           </div>

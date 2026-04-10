@@ -11,14 +11,14 @@ export const StudyPage: React.FC = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { getStudyCards, updateMastery, getCategories, t, cards } = useMasteryStore();
-  const { 
-    isActive, 
-    queue, 
-    currentIndex, 
-    startSession, 
-    evaluateCard, 
-    endSession, 
-    isFinished 
+  const {
+    isActive,
+    queue,
+    currentIndex,
+    startSession,
+    evaluateCard,
+    endSession,
+    isFinished
   } = useStudySessionStore();
 
   const [isFlipped, setIsFlipped] = useState(false);
@@ -35,7 +35,7 @@ export const StudyPage: React.FC = () => {
 
   const handleNext = (grade: ReviewGrade) => {
     if (pendingNext !== null) return;
-    
+
     // 1. Permanently update the card in the main store
     const currentCardId = queue[currentIndex];
     updateMastery(currentCardId, grade);
@@ -86,12 +86,12 @@ export const StudyPage: React.FC = () => {
         </div>
 
         {getStudyCards('All').length > 0 && (
-          <button 
+          <button
             onClick={() => startReview('All')}
-            className="w-full mb-12 p-8 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 rounded-2xl flex items-center justify-between group hover:shadow-2xl transition-all active:scale-[0.99]"
+            className="w-full mb-12 p-8 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 rounded-xl flex items-center justify-between group hover:shadow-2xl transition-all active:scale-[0.99]"
           >
             <div className="flex items-center gap-6">
-              <div className="w-16 h-16 bg-white/10 dark:bg-zinc-900/10 rounded-xl flex items-center justify-center">
+              <div className="w-16 h-16 bg-white/10 dark:bg-zinc-900/10 rounded-lg flex items-center justify-center">
                 <GraduationCap className="text-white dark:text-zinc-900" size={32} />
               </div>
               <div className="text-left">
@@ -119,7 +119,7 @@ export const StudyPage: React.FC = () => {
                     <BookOpen size={20} />
                   </div>
                   {cardsDue > 0 && (
-                    <span className="bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 text-[10px] font-bold px-2 py-1 rounded-full">
+                    <span className="bg-red-100 dark:bg-red-900/30 text-red-600 dark:text-red-400 text-[10px] font-bold px-2 py-1 rounded-md">
                       {cardsDue} {t.study.due}
                     </span>
                   )}
@@ -149,14 +149,14 @@ export const StudyPage: React.FC = () => {
   if (queue.length === 0 && !isFinished()) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[400px] text-center p-8">
-        <div className="w-16 h-16 bg-zinc-100 dark:bg-zinc-800 rounded-full flex items-center justify-center mb-6 border border-zinc-200 dark:border-zinc-700">
+        <div className="w-16 h-16 bg-zinc-100 dark:bg-zinc-800 rounded-lg flex items-center justify-center mb-6 border border-zinc-200 dark:border-zinc-700">
           <Check className="text-zinc-400" size={32} />
         </div>
         <h2 className="text-2xl font-semibold text-zinc-900 dark:text-zinc-100 mb-2">{t.study.caughtUp}</h2>
         <p className="text-zinc-500 max-w-xs">{t.study.caughtUpDesc}</p>
-        <button 
+        <button
           onClick={endSession}
-          className="mt-8 px-6 py-2 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 rounded-md font-medium hover:bg-zinc-800 dark:hover:bg-zinc-200 transition-colors"
+          className="mt-8 px-6 py-2 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 rounded-lg font-medium hover:bg-zinc-800 dark:hover:bg-zinc-200 transition-colors"
         >
           {t.study.back}
         </button>
@@ -167,16 +167,16 @@ export const StudyPage: React.FC = () => {
   if (isFinished()) {
     return (
       <div className="flex flex-col items-center justify-center min-h-[500px] text-center p-8">
-        <motion.div 
+        <motion.div
           initial={{ scale: 0.5, opacity: 0 }}
           animate={{ scale: 1, opacity: 1 }}
           transition={{ type: "spring", stiffness: 260, damping: 20 }}
-          className="w-24 h-24 bg-zinc-900 dark:bg-white rounded-full flex items-center justify-center mb-8 shadow-2xl"
+          className="w-24 h-24 bg-zinc-900 dark:bg-white rounded-xl flex items-center justify-center mb-8 shadow-2xl"
         >
           <Check className="text-white dark:text-zinc-900" size={48} strokeWidth={3} />
         </motion.div>
-        
-        <motion.h2 
+
+        <motion.h2
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.2 }}
@@ -184,8 +184,8 @@ export const StudyPage: React.FC = () => {
         >
           {t.study.finished}
         </motion.h2>
-        
-        <motion.p 
+
+        <motion.p
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.3 }}
@@ -194,25 +194,24 @@ export const StudyPage: React.FC = () => {
           {t.study.finishedDesc} <span className="text-zinc-900 dark:text-zinc-100 font-bold">{selectedCategory}</span>.
         </motion.p>
 
-        <motion.div 
+        <motion.div
           initial={{ y: 20, opacity: 0 }}
           animate={{ y: 0, opacity: 1 }}
           transition={{ delay: 0.4 }}
           className="flex flex-col gap-4 w-full max-w-xs"
         >
-          <button 
+          <button
             onClick={() => {
               endSession();
-              // Navigate back home to see updated Dashboard
-              window.location.href = '/'; 
+              window.location.href = '/';
             }}
-            className="w-full py-4 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 rounded-2xl font-bold hover:scale-[1.02] active:scale-[0.98] transition-all shadow-lg"
+            className="w-full py-4 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 rounded-lg font-bold hover:scale-[1.02] active:scale-[0.98] transition-all shadow-lg"
           >
             {t.study.back}
           </button>
-          <button 
+          <button
             onClick={() => startReview()}
-            className="w-full py-4 border border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-400 rounded-2xl font-bold hover:bg-zinc-50 dark:hover:bg-zinc-900 transition-all flex items-center justify-center gap-2"
+            className="w-full py-4 border border-zinc-200 dark:border-zinc-800 text-zinc-600 dark:text-zinc-400 rounded-lg font-bold hover:bg-zinc-50 dark:hover:bg-zinc-900 transition-all flex items-center justify-center gap-2"
           >
             <RotateCcw size={18} />
             {t.study.restart}
@@ -229,12 +228,12 @@ export const StudyPage: React.FC = () => {
     <div className="w-full max-w-2xl mx-auto px-4 py-12">
       <div className="flex items-center justify-between mb-8">
         <div className="flex flex-col">
-          <h2 className="text-sm font-bold uppercase tracking-widest text-zinc-400">{selectedCategory}</h2>
+          <h2 className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400">{selectedCategory}</h2>
           <p className="text-zinc-900 dark:text-zinc-100 font-medium">{t.study.cardOf.replace('{current}', (currentIndex + 1).toString()).replace('{total}', queue.length.toString())}</p>
         </div>
-        <button 
+        <button
           onClick={endSession}
-          className="text-xs font-bold uppercase tracking-widest text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
+          className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
         >
           {t.study.exit}
         </button>
@@ -250,7 +249,7 @@ export const StudyPage: React.FC = () => {
 
         <AnimatePresence mode="wait">
           {isFlipped ? (
-            <motion.div 
+            <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: -10 }}
@@ -258,16 +257,16 @@ export const StudyPage: React.FC = () => {
             >
               <button
                 onClick={() => handleNext(0)}
-                className="flex-1 flex flex-col items-center justify-center p-4 border border-zinc-200 dark:border-zinc-700 rounded-xl font-medium text-zinc-600 dark:text-zinc-400 hover:bg-red-50 dark:hover:bg-red-950 hover:border-red-200 dark:hover:border-red-800 hover:text-red-600 dark:hover:text-red-400 transition-all group"
+                className="flex-1 flex flex-col items-center justify-center p-4 border border-zinc-200 dark:border-zinc-700 rounded-lg font-medium text-zinc-600 dark:text-zinc-400 hover:bg-red-50 dark:hover:bg-red-950 hover:border-red-200 dark:hover:border-red-800 hover:text-red-600 dark:hover:text-red-400 transition-all group"
               >
                 <X size={20} className="mb-1 text-red-500" />
                 <span className="text-[10px] uppercase font-bold tracking-widest">{t.study.forgot}</span>
                 <span className="hidden md:inline text-[9px] opacity-40 mt-1">[1]</span>
               </button>
-              
+
               <button
                 onClick={() => handleNext(3)}
-                className="flex-1 flex flex-col items-center justify-center p-4 border border-zinc-200 dark:border-zinc-700 rounded-xl font-medium text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-zinc-100 transition-all group"
+                className="flex-1 flex flex-col items-center justify-center p-4 border border-zinc-200 dark:border-zinc-700 rounded-lg font-medium text-zinc-600 dark:text-zinc-400 hover:bg-zinc-100 dark:hover:bg-zinc-800 hover:text-zinc-900 dark:hover:text-zinc-100 transition-all group"
               >
                 <RotateCcw size={20} className="mb-1 text-zinc-400" />
                 <span className="text-[10px] uppercase font-bold tracking-widest">{t.study.hard}</span>
@@ -276,7 +275,7 @@ export const StudyPage: React.FC = () => {
 
               <button
                 onClick={() => handleNext(5)}
-                className="flex-1 flex flex-col items-center justify-center p-4 border border-zinc-900 dark:border-white bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 rounded-xl font-medium hover:bg-zinc-800 dark:hover:bg-zinc-200 transition-all group shadow-lg"
+                className="flex-1 flex flex-col items-center justify-center p-4 border border-zinc-900 dark:border-white bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 rounded-lg font-medium hover:bg-zinc-800 dark:hover:bg-zinc-200 transition-all group shadow-lg"
               >
                 <Check size={20} className="mb-1" />
                 <span className="text-[10px] uppercase font-bold tracking-widest">{t.study.easy}</span>
@@ -284,7 +283,7 @@ export const StudyPage: React.FC = () => {
               </button>
             </motion.div>
           ) : (
-            <div className="h-[82px] flex items-center justify-center text-zinc-400 text-sm italic px-8 text-center pt-4">
+            <div className="h-[82px] flex items-center justify-center text-zinc-400 text-sm italic px-8 text-center pt-4 italic">
               {t.study.flip}
             </div>
           )}
