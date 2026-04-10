@@ -1,6 +1,6 @@
 <div align="center">
    <h1>ActiveRecall Flashcards</h1>
-  <p>Master any subject with <strong>Active Recall</strong> and <strong>Spaced Repetition</strong>.</p>
+  <p>Master any subject with <strong>Active Recall</strong> and <strong>FSRS (Free Spaced Repetition Scheduler)</strong>.</p>
 
   <p>
     <img src="https://img.shields.io/badge/react-19-blue?logo=react" alt="React 19" />
@@ -15,24 +15,25 @@
 
 ## ✨ Features
 
-- **Spaced Repetition Algorithm** — Cards you fail reset to Level 0; cards you master increase their review interval (1d → 3d → 7d → 14d → 30d)
-- **3D Flip Cards** — Smooth spring animations powered by Motion
-- **Cloze Deletion** — Create fill-in-the-blank cards with `{{answer}}` syntax
-- **Performance Dashboard** — Track streaks, mastery distribution, and study volume over time
-- **Dark Mode** — System, Light, and Dark themes
-- **PWA** — Install on any device and use offline
-- **i18n** — English and Portuguese
-- **Import / Export** — Backup and restore your data as JSON
-- **Cloud Backup** — Google Drive integration (coming soon)
+- **Advanced Spaced Repetition (FSRS)** — Integrates the state-of-the-art Free Spaced Repetition Scheduler algorithm to optimize study intervals and maximize retention with minimal effort.
+- **Limitless Storage (IndexedDB)** — Migrated from LocalStorage to IndexedDB, supporting infinite scalability and separating logs from card metadata entirely offline.
+- **3D Flip Cards** — Smooth spring animations powered by Motion.
+- **Cloze Deletion** — Create fill-in-the-blank cards with `{{answer}}` syntax.
+- **Performance Dashboard** — Track streaks, mastery distribution, and study volume over time.
+- **Import / Export Sharing** — Backup, restore, and share your individual cards or entire decks as JSON.
+- **PWA & Offline-First** — Install on any device (iOS/Android/Desktop) and use 100% offline. Data never leaves your device.
+- **i18n** — Interface fully available in English and Portuguese.
+- **Dark Mode** — System, Light, and Dark high-contrast themes.
 
 ## 🏗️ Tech Stack
 
 | Layer | Technology |
 |-------|-----------|
 | Frontend | React 19, TypeScript, Tailwind CSS 4, Motion |
-| State | Zustand (persisted to LocalStorage) |
+| State | Zustand |
+| Database | IndexedDB (natively wrapped via `idb`) |
+| Algorithm | `ts-fsrs` (Free Spaced Repetition Scheduler) |
 | Charts | Recharts |
-| Server | Express, Helmet, CORS, Rate Limiting |
 | Build | Vite |
 | Tests | Vitest |
 
@@ -40,17 +41,17 @@
 
 ```
 src/
-├── domain/entities/       # Flashcard & StudyLog types
-├── application/store/     # Zustand store (mastery, streak, spaced repetition)
+├── domain/
+│   ├── entities/          # Flashcard & StudyLog models
+│   └── services/          # SRSEngine (FSRS implementation) & MigrationService
+├── application/store/     # Zustand stores + IndexedDB Adapters
 ├── presentation/
-│   ├── components/        # Reusable UI (Card)
-│   ├── hooks/             # Custom hooks (PWA install)
-│   ├── layouts/           # MainLayout (header, nav, footer)
+│   ├── components/        # Reusable UI (Card, Typography)
+│   ├── hooks/             # Custom hooks (PWA install, i18n, Shortcuts)
+│   ├── layouts/           # MainLayout (sidebar, nav, footer)
 │   └── pages/             # Dashboard, Study, Library, Settings
-├── lib/                   # Utilities (cn)
 ├── translations.ts        # i18n strings (en/pt)
-├── App.tsx                # Router + ErrorBoundary
-└── main.tsx               # Entry point + SW registration
+└── main.tsx               # Application entry point
 ```
 
 ## 🚀 Getting Started
@@ -65,40 +66,29 @@ cd activerecall-flashcards
 # Install dependencies
 npm install
 
-# Set up environment variables
-cp .env.example .env
-# Edit .env and add your GEMINI_API_KEY (optional)
-
 # Start development server
 npm run dev
 ```
 
-Open [http://localhost:3000](http://localhost:3000).
+Open [http://localhost:5173](http://localhost:5173).
 
 ## 📦 Production
 
+We recommend standard static hosting (Vercel, Netlify, Cloudflare Pages, etc.) since the app is fully local and runs entirely in the browser.
+
 ```bash
-# Build frontend + server
+# Build the production PWA bundle
 npm run build
 
-# Start production server
-ALLOWED_ORIGIN=https://yourdomain.com npm start
+# Preview locally
+npm run preview
 ```
 
 ## 🧪 Tests
 
 ```bash
-npm test           # Run once
-npm run test:watch # Watch mode
+npm test           # Run unit tests (FSRS edge cases & state)
 ```
-
-## 🔧 Environment Variables
-
-| Variable | Required | Description |
-|----------|----------|-------------|
-| `GEMINI_API_KEY` | No | Google Gemini API key for AI features |
-| `ALLOWED_ORIGIN` | Production | CORS allowed origin |
-| `PORT` | No | Server port (default: 3000) |
 
 ## 📄 License
 
