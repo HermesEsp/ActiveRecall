@@ -3,7 +3,7 @@ import {
   Plus, Search, Edit2, Trash2,
   Eye, Bold, Italic, Underline as UnderlineIcon, Code,
   Layers, Zap, Sparkles, MousePointer2, Scissors,
-  RotateCcw, Download, Upload
+  RotateCcw, Download, Upload, ChevronDown
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useMasteryStore } from '../../application/store/useMasteryStore';
@@ -24,28 +24,20 @@ const Kbd = ({ children }: { children: React.ReactNode }) => (
 );
 
 const CategoryFilter = ({ categories, selected, onSelect, t }: any) => (
-  <div className="flex gap-2 overflow-x-auto pb-4 scrollbar-hide">
-    <button
-      onClick={() => onSelect('All')}
-      className={`px-5 py-2.5 rounded-lg text-[10px] font-black uppercase tracking-[0.2em] transition-all whitespace-nowrap border ${selected === 'All'
-        ? 'bg-zinc-900 border-zinc-900 text-white shadow-xl dark:bg-white dark:border-white dark:text-zinc-900'
-        : 'bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800 text-zinc-400 hover:border-zinc-900 dark:hover:border-zinc-100'
-        }`}
+  <div className="relative min-w-[240px]">
+    <select
+      value={selected}
+      onChange={(e) => onSelect(e.target.value)}
+      className="w-full appearance-none bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-xl px-6 py-4 pr-12 text-[11px] font-black uppercase tracking-[0.2em] text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-zinc-900 dark:focus:ring-white focus:border-transparent transition-all outline-none cursor-pointer shadow-sm hover:border-zinc-300 dark:hover:border-zinc-700"
     >
-      {t.library.allCategories}
-    </button>
-    {categories.map((cat: string) => (
-      <button
-        key={cat}
-        onClick={() => onSelect(cat)}
-        className={`px-5 py-2.5 rounded-lg text-[10px] font-black uppercase tracking-[0.2em] transition-all whitespace-nowrap border ${selected === cat
-          ? 'bg-zinc-900 border-zinc-900 text-white shadow-xl dark:bg-white dark:border-white dark:text-zinc-900'
-          : 'bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800 text-zinc-400 hover:border-zinc-900 dark:hover:border-zinc-100'
-          }`}
-      >
-        {cat}
-      </button>
-    ))}
+      <option value="All">{t.library.allCategories}</option>
+      {categories.map((cat: string) => (
+        <option key={cat} value={cat}>{cat}</option>
+      ))}
+    </select>
+    <div className="absolute right-5 top-1/2 -translate-y-1/2 pointer-events-none text-zinc-400">
+      <ChevronDown size={18} strokeWidth={3} />
+    </div>
   </div>
 );
 
