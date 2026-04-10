@@ -6,6 +6,8 @@ import { translations, Language } from '../../translations';
 import { SRSEngine, ReviewGrade } from '../../domain/services/SRSEngine';
 import { MigrationService } from '../../domain/services/MigrationService';
 
+export { type ReviewGrade };
+
 export function getDefaultCards(lang: Language): Flashcard[] {
   const cards = translations[lang].defaultCards.map((card, i) => ({
     id: `default-${i + 1}`,
@@ -33,15 +35,22 @@ function applyTheme(theme: 'system' | 'light' | 'dark') {
 
 export type Theme = 'system' | 'light' | 'dark';
 
-interface MasteryState {
-  cards: Flashcard[];
+export interface UserProfile {
+  name: string;
+  email: string;
+  streak: number;
   language: Language;
   theme: Theme;
-  streak: number;
+}
+
+interface MasteryState {
+  cards: Flashcard[];
+  user: UserProfile;
   lastStudyDate: string | null;
   studyHistory: StudyLog[];
   setLanguage: (lang: Language) => void;
   setTheme: (theme: Theme) => void;
+  setUser: (user: UserProfile) => void;
   t: typeof translations.en;
   addCard: (front: string, back: string, category: string, type?: FlashcardType) => void;
   updateCard: (id: string, front: string, back: string, category: string, type?: FlashcardType) => void;
@@ -53,28 +62,36 @@ interface MasteryState {
   exportData: () => string;
   importData: (jsonData: string) => boolean;
   restoreTutorial: () => void;
+  resetAllData: () => void;
 }
 
 export const useMasteryStore = create<MasteryState>()(
   persist(
     (set, get) => ({
       cards: getDefaultCards('en'),
-      language: 'en',
-      theme: 'system',
-      streak: 0,
+      user: {
+        name: 'User',
+        email: 'user@example.com',
+        streak: 0,
+        language: 'en',
+        theme: 'system'
+      },
       lastStudyDate: null,
       studyHistory: [],
-      setLanguage: (lang) => set({ language: lang, t: translations[lang] }),
+      setLanguage: (lang) => set((state) => ({ 
+        user: { ...state.user, language: lang },
+        t: translations[lang] 
+      })),
       setTheme: (theme) => {
-        set({ theme });
+        set((state) => ({ user: { ...state.user, theme } }));
         applyTheme(theme);
       },
+      setUser: (user) => set({ user }),
       t: translations.en,
       migrateAll: () => {
         set(state => ({ cards: MigrationService.migrateAll(state.cards) }));
       },
       addCard: (front, back, category, type) => {
-        // Intelligent type detection
         const detectedType = type || (front.includes('{{') && front.includes('}}') ? 'cloze' : 'standard');
         
         const newCard: Flashcard = {
@@ -90,11 +107,12 @@ export const useMasteryStore = create<MasteryState>()(
         set((state) => ({ cards: [...state.cards, MigrationService.migrateCard(newCard)] }));
       },
       updateCard: (id, front, back, category, type = 'standard') => {
-        set((state) => ({
-          cards: state.cards.map((card) => 
+        set((state) => {
+          const updatedCards = state.cards.map((card) => 
             card.id === id ? { ...card, front, back, category, type } : card
-          ),
-        }));
+          );
+          return { cards: updatedCards };
+        });
       },
       deleteCard: (id) => {
         set((state) => ({
@@ -106,10 +124,9 @@ export const useMasteryStore = create<MasteryState>()(
         const todayStr = now.toISOString().split('T')[0];
         
         set((state) => {
-          let newStreak = state.streak;
+          let newStreak = state.user.streak;
           let newLastStudyDate = state.lastStudyDate;
 
-          // Update streak if this is the first study of a new day
           if (newLastStudyDate !== todayStr) {
             const yesterday = new Date();
             yesterday.setDate(yesterday.getDate() - 1);
@@ -131,10 +148,8 @@ export const useMasteryStore = create<MasteryState>()(
 
           const updatedCards = state.cards.map((card) => {
             if (card.id !== cardId) return card;
-
             const srsUpdate = SRSEngine.calculateNextReview(card, grade);
             
-            // Map SRD update back to legacy masteryLevel for partial backward compatibility
             let newLevel = card.masteryLevel;
             if (grade === 0) newLevel = 0;
             else if (grade === 3) newLevel = Math.min(5, card.masteryLevel + 1) as MasteryLevel;
@@ -149,7 +164,7 @@ export const useMasteryStore = create<MasteryState>()(
 
           return {
             cards: updatedCards,
-            streak: newStreak,
+            user: { ...state.user, streak: newStreak },
             lastStudyDate: newLastStudyDate,
             studyHistory: newHistory,
           };
@@ -167,59 +182,56 @@ export const useMasteryStore = create<MasteryState>()(
           dueCards = dueCards.filter(card => card.category === category);
         }
 
-        // Priority sort: overdue by more time first
         return dueCards.sort((a, b) => (a.nextReviewAt || 0) - (b.nextReviewAt || 0));
       },
       getCategories: () => {
         const { cards } = get();
         const categories = Array.from(new Set(cards.map(c => c.category)));
-        return ['All', ...categories];
+        return categories; // Return raw categories, All is handled in UI
       },
       exportData: () => {
         const state = get();
-        const data = {
+        return JSON.stringify({
           cards: state.cards,
-          streak: state.streak,
+          user: state.user,
           lastStudyDate: state.lastStudyDate,
           studyHistory: state.studyHistory,
-          language: state.language,
-          theme: state.theme,
-          version: '1.0.0'
-        };
-        return JSON.stringify(data, null, 2);
+          version: '1.0.1'
+        }, null, 2);
       },
       importData: (jsonData) => {
         try {
           const data = JSON.parse(jsonData);
-          // Basic validation
           if (!data.cards || !Array.isArray(data.cards)) return false;
           
           set({
             cards: MigrationService.migrateAll(data.cards),
-            streak: data.streak || 0,
+            user: data.user || data.profile || { name: 'User', email: '', streak: 0, language: 'en', theme: 'system' },
             lastStudyDate: data.lastStudyDate || null,
             studyHistory: data.studyHistory || [],
-            language: data.language || 'en',
-            theme: data.theme || 'system'
           });
           return true;
         } catch (e) {
-          console.error('Import failed', e);
           return false;
         }
       },
       restoreTutorial: () => {
-        const { language, cards: currentCards } = get();
-        const tutorialCards = getDefaultCards(language);
-        
-        // Don't add if cards with same content already exist
+        const { user, cards: currentCards } = get();
+        const tutorialCards = getDefaultCards(user.language);
         const missingTutorials = tutorialCards.filter(
           tc => !currentCards.some(cc => cc.front === tc.front)
         );
-        
         if (missingTutorials.length > 0) {
           set({ cards: [...currentCards, ...missingTutorials] });
         }
+      },
+      resetAllData: () => {
+        set((state) => ({
+          cards: getDefaultCards(state.user.language),
+          user: { ...state.user, streak: 0 },
+          studyHistory: [],
+          lastStudyDate: null
+        }));
       }
     }),
     {
@@ -230,21 +242,19 @@ export const useMasteryStore = create<MasteryState>()(
       },
       onRehydrateStorage: () => (state) => {
         if (state) {
-          // Automatic migration trigger
           if (state.cards.some(c => !c.srsVersion)) {
             state.cards = MigrationService.migrateAll(state.cards);
           }
-          state.t = translations[state.language || 'en'];
-          applyTheme(state.theme || 'system');
+          state.t = translations[state.user?.language || 'en'];
+          applyTheme(state.user?.theme || 'system');
         }
       }
     }
   )
 );
 
-// Listen for OS theme changes when in system mode
 if (typeof window !== 'undefined') {
   window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
-    if (useMasteryStore.getState().theme === 'system') applyTheme('system');
+    if (useMasteryStore.getState().user.theme === 'system') applyTheme('system');
   });
 }
