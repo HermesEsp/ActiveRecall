@@ -5,6 +5,7 @@ import { ReviewGrade } from '../../domain/services/SRSEngine';
 
 export interface StudySessionState {
   isActive: boolean;
+  isPractice: boolean;
   queue: string[]; // IDs of cards
   results: Record<string, ReviewGrade>;
   currentIndex: number;
@@ -12,7 +13,7 @@ export interface StudySessionState {
   startTime: number | null;
   
   // Actions
-  startSession: (cards: Flashcard[], category: string) => void;
+  startSession: (cards: Flashcard[], category: string, isPractice?: boolean) => void;
   evaluateCard: (cardId: string, grade: ReviewGrade) => void;
   endSession: () => void;
   getCurrentCardId: () => string | null;
@@ -21,16 +22,18 @@ export interface StudySessionState {
 
 export const useStudySessionStore = create<StudySessionState>()((set, get) => ({
   isActive: false,
+  isPractice: false,
   queue: [],
   results: {},
   currentIndex: 0,
   category: 'All',
   startTime: null,
 
-  startSession: (cards, category) => {
+  startSession: (cards, category, isPractice = false) => {
     const shuffledIds = shuffle(cards.map(c => c.id));
     set({
       isActive: true,
+      isPractice,
       queue: shuffledIds,
       results: {},
       currentIndex: 0,

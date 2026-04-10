@@ -65,7 +65,7 @@ export const Card: React.FC<CardProps> = ({ card, isFlipped, onFlip, onFlipCompl
 
   return (
     <div 
-      className="relative w-full max-w-md aspect-[3/4] md:aspect-[4/3] perspective-1000 cursor-pointer group"
+      className="relative w-full max-w-md mx-auto aspect-[3/4] md:aspect-[4/3] perspective-1000 cursor-pointer group"
       onClick={onFlip}
     >
       <motion.div

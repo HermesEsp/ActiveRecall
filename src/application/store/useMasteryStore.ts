@@ -29,7 +29,7 @@ interface MasteryState {
   addCard: (front: string, back: string, category: string, type?: FlashcardType) => void;
   updateCard: (id: string, front: string, back: string, category: string, type?: FlashcardType) => void;
   deleteCard: (id: string) => void;
-  updateMastery: (cardId: string, grade: ReviewGrade) => void;
+  updateMastery: (cardId: string, grade: ReviewGrade, isPractice?: boolean) => void;
   getStudyCards: (category?: string, forceAll?: boolean) => Flashcard[];
   getCategories: () => string[];
   migrateAll: () => void;
@@ -82,7 +82,9 @@ export const useMasteryStore = create<MasteryState>()(
           cards: state.cards.filter((card) => card.id !== id),
         }));
       },
-      updateMastery: (cardId, grade) => {
+      updateMastery: (cardId, grade, isPractice = false) => {
+        if (isPractice) return; // Reviews do not affect SRS stats or daily history
+
         const now = new Date();
         const todayStr = now.toISOString().split('T')[0];
         

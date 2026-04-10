@@ -48,15 +48,17 @@ export const StudyPage: React.FC = () => {
   const startReview = (category: string = 'All') => {
     // Try to get due cards first
     let studyCards = getStudyCards(category);
+    let isPracticeSession = false;
     
     // If no cards are due, include all cards for practice
     if (studyCards.length === 0) {
       studyCards = getStudyCards(category, true);
+      isPracticeSession = true;
     }
 
     if (studyCards.length > 0) {
       setSelectedCategory(category);
-      startSession(studyCards, category);
+      startSession(studyCards, category, isPracticeSession);
       setIsFlipped(false);
     }
   };
@@ -64,7 +66,10 @@ export const StudyPage: React.FC = () => {
   const handleNext = (grade: ReviewGrade) => {
     if (pendingNext !== null) return;
     const currentCardId = queue[currentIndex];
-    updateMastery(currentCardId, grade);
+    
+    const { isPractice } = useStudySessionStore.getState();
+    updateMastery(currentCardId, grade, isPractice);
+    
     evaluateCard(currentCardId, grade);
     setIsFlipped(false);
   };
@@ -124,7 +129,7 @@ export const StudyPage: React.FC = () => {
                 className="p-10 border-2 border-zinc-100 dark:border-zinc-800 rounded-xl bg-white dark:bg-zinc-900 hover:border-zinc-900 dark:hover:border-zinc-100 hover:shadow-2xl transition-all text-left group relative overflow-hidden"
               >
                 <div className="relative z-10">
-                  <div className="flex justify-between items-start mb-10"><div className="w-12 h-12 bg-zinc-50 dark:bg-zinc-800 rounded-xl flex items-center justify-center group-hover:bg-zinc-900 dark:group-hover:bg-white group-hover:text-white dark:group-hover:text-zinc-900 transition-all shadow-inner"><BookOpen size={24} /></div>{cardsDue > 0 && <span className="bg-red-500 text-white text-[9px] font-black tracking-widest px-3 py-1.5 rounded-lg shadow-lg shadow-red-500/30">{cardsDue} {t.study.due}</span>}</div>
+                  <div className="flex justify-between items-start mb-10"><div className="w-12 h-12 bg-zinc-50 dark:bg-zinc-800 rounded-xl flex items-center justify-center group-hover:bg-zinc-900 dark:group-hover:bg-white group-hover:text-white dark:group-hover:text-zinc-900 transition-all shadow-inner"><BookOpen size={24} /></div>{cardsDue > 0 ? <span className="bg-red-500 text-white text-[9px] font-black tracking-widest px-3 py-1.5 rounded-lg shadow-lg shadow-red-500/30">{cardsDue} {t.study.due}</span> : <span className="bg-zinc-100 dark:bg-zinc-800 text-zinc-400 text-[9px] font-black tracking-widest px-3 py-1.5 rounded-lg border border-zinc-200 dark:border-zinc-700">Practice</span>}</div>
                   <h3 className="text-2xl font-black text-zinc-900 dark:text-zinc-100 mb-2 tracking-tight">{cat}</h3>
                   <div className="flex items-center gap-2 text-zinc-400 group-hover:text-zinc-900 dark:group-hover:text-zinc-100 transition-colors"><span className="text-[10px] font-bold uppercase tracking-[0.2em]">{t.study.start}</span><Play size={12} fill="currentColor" /></div>
                 </div>
@@ -166,7 +171,22 @@ export const StudyPage: React.FC = () => {
   return (
     <div className="max-w-3xl mx-auto px-4 py-8 md:py-16 animate-in fade-in duration-500">
       <div className="flex items-center justify-between mb-16">
-        <div className="flex items-center gap-6"><div className="w-12 h-12 bg-white dark:bg-zinc-900 border-2 border-zinc-100 dark:border-zinc-800 rounded-xl flex items-center justify-center shadow-sm"><Focus className="text-zinc-400" size={20} /></div><div><span className="text-[10px] font-black uppercase tracking-[0.3em] text-zinc-400">{selectedCategory}</span><h4 className="text-lg font-black tracking-tight leading-none pt-1">{t.study.cardOf.replace('{current}', (currentIndex + 1).toString()).replace('{total}', queue.length.toString())}</h4></div></div>
+        <div className="flex items-center gap-6">
+          <div className="w-12 h-12 bg-white dark:bg-zinc-900 border-2 border-zinc-100 dark:border-zinc-800 rounded-xl flex items-center justify-center shadow-sm">
+            <Focus className="text-zinc-400" size={20} />
+          </div>
+          <div>
+            <div className="flex items-center gap-2">
+              <span className="text-[10px] font-black uppercase tracking-[0.3em] text-zinc-400">{selectedCategory}</span>
+              {useStudySessionStore.getState().isPractice && (
+                <span className="text-[8px] font-black uppercase tracking-widest bg-zinc-100 dark:bg-zinc-800 text-zinc-500 px-2 py-0.5 rounded border border-zinc-200 dark:border-zinc-700">Practice Mode</span>
+              )}
+            </div>
+            <h4 className="text-lg font-black tracking-tight leading-none pt-1">
+              {t.study.cardOf.replace('{current}', (currentIndex + 1).toString()).replace('{total}', queue.length.toString())}
+            </h4>
+          </div>
+        </div>
         <button onClick={endSession} className="text-[10px] font-black uppercase tracking-widest text-zinc-400 hover:text-red-500 transition-colors border-b-2 border-transparent hover:border-red-500/20 pb-1">{t.study.exit}</button>
       </div>
 
@@ -187,7 +207,7 @@ export const StudyPage: React.FC = () => {
                </div>
             </motion.div>
           ) : (
-            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="flex gap-4 md:gap-6 w-full max-w-xl">
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="flex gap-4 md:gap-6 w-full max-w-xl mx-auto">
               <button onClick={() => handleNext(0)} className="flex-1 group flex flex-col items-center justify-center py-6 bg-white dark:bg-zinc-900 border-2 border-zinc-100 dark:border-zinc-800 rounded-xl hover:border-red-500 hover:shadow-2xl hover:shadow-red-500/20 transition-all relative">
                 <X size={24} className="text-zinc-300 group-hover:text-red-500 transition-colors mb-4" />
                 <span className="text-[10px] font-black uppercase tracking-widest group-hover:text-red-600 mb-4">{t.study.forgot}</span>
