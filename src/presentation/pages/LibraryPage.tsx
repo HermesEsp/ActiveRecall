@@ -2,7 +2,8 @@ import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { 
   Plus, Search, Edit2, Trash2, CheckCircle2, 
-  Trash, ChevronRight, Filter, Eye, X, ChevronDown 
+  Trash, ChevronRight, Filter, Eye, X, ChevronDown,
+  Bold, Italic, Underline as UnderlineIcon, Code
 } from 'lucide-react';
 import { useMasteryStore } from '../../application/store/useMasteryStore';
 import { Card } from '../components/Card';
@@ -75,30 +76,36 @@ export const LibraryPage: React.FC = () => {
   const backRef = useRef<HTMLTextAreaElement>(null);
   const frontRef = useRef<HTMLTextAreaElement>(null);
 
-  const insertCloze = () => {
-    const el = frontRef.current;
+  const wrapSelection = (prefix: string, suffix: string, target: 'front' | 'back' = 'front') => {
+    const el = target === 'front' ? frontRef.current : backRef.current;
+    const setter = target === 'front' ? setFront : setBack;
+    const value = target === 'front' ? front : back;
+    
     if (!el) return;
 
     const start = el.selectionStart;
     const end = el.selectionEnd;
-    const text = el.value;
-    const selected = text.substring(start, end);
+    const selected = value.substring(start, end);
     
-    const before = text.substring(0, start);
-    const after = text.substring(end);
+    const before = value.substring(0, start);
+    const after = value.substring(end);
     
-    const newText = `${before}{{${selected}}}${after}`;
-    setFront(newText);
+    const newValue = `${before}${prefix}${selected}${suffix}${after}`;
+    setter(newValue);
     
-    // Position cursor inside or after
     setTimeout(() => {
       el.focus();
-      const newPos = selected ? start + selected.length + 4 : start + 2;
+      const newPos = selected ? start + prefix.length + selected.length + suffix.length : start + prefix.length;
       el.setSelectionRange(newPos, newPos);
     }, 0);
   };
 
   const handleFrontKeyDown = (e: React.KeyboardEvent<HTMLTextAreaElement>) => {
+    // Shortcuts
+    if ((e.metaKey || e.ctrlKey) && e.key === 'b') { e.preventDefault(); wrapSelection('**', '**'); }
+    if ((e.metaKey || e.ctrlKey) && e.key === 'i') { e.preventDefault(); wrapSelection('*', '*'); }
+    if ((e.metaKey || e.ctrlKey) && e.key === 'u') { e.preventDefault(); wrapSelection('__', '__'); }
+    
     // Auto-pair [[ to {{}}
     if (e.key === '[' && front.endsWith('[')) {
       e.preventDefault();
@@ -204,14 +211,49 @@ export const LibraryPage: React.FC = () => {
                 <div className="space-y-2">
                   <div className="flex items-center justify-between px-1">
                     <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">{t.library.cardFront}</label>
-                    <button 
-                      type="button"
-                      onClick={insertCloze}
-                      className="text-[10px] font-black bg-zinc-100 dark:bg-zinc-800 px-2 py-0.5 rounded hover:bg-zinc-200 dark:hover:bg-zinc-700 transition-colors"
-                      title="Wrap selection in Cloze {{}}"
-                    >
-                      {'{ }'} CLOZE
-                    </button>
+                    <div className="flex items-center gap-1">
+                      <button 
+                        type="button"
+                        onClick={() => wrapSelection('**', '**')}
+                        className="p-1.5 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-lg transition-colors text-zinc-500"
+                        title="Bold (Cmd+B)"
+                      >
+                        <Bold size={14} />
+                      </button>
+                      <button 
+                        type="button"
+                        onClick={() => wrapSelection('*', '*')}
+                        className="p-1.5 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-lg transition-colors text-zinc-500"
+                        title="Italic (Cmd+I)"
+                      >
+                        <Italic size={14} />
+                      </button>
+                      <button 
+                        type="button"
+                        onClick={() => wrapSelection('__', '__')}
+                        className="p-1.5 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-lg transition-colors text-zinc-500"
+                        title="Underline (Cmd+U)"
+                      >
+                        <UnderlineIcon size={14} />
+                      </button>
+                      <button 
+                        type="button"
+                        onClick={() => wrapSelection('`', '`')}
+                        className="p-1.5 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-lg transition-colors text-zinc-500"
+                        title="Code Monospace"
+                      >
+                        <Code size={14} />
+                      </button>
+                      <div className="w-px h-3 bg-zinc-200 dark:bg-zinc-800 mx-1" />
+                      <button 
+                        type="button"
+                        onClick={() => wrapSelection('{{', '}}')}
+                        className="text-[10px] font-black bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 px-2 py-1 rounded-lg hover:scale-105 transition-all shadow-sm"
+                        title="Wrap selection in Cloze {{}}"
+                      >
+                        {'{ }'} CLOZE
+                      </button>
+                    </div>
                   </div>
                   <textarea
                     ref={frontRef}

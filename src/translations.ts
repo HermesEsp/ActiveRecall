@@ -19,6 +19,12 @@ export const translations = {
         category: 'Tutorial',
         type: 'standard',
       },
+      {
+        front: 'How can you **style** your cards to make them easier to read?',
+        back: "Use the toolbar or shortcuts: \n\n• **Bold** (Cmd+B) \n• *Italic* (Cmd+I) \n• `Code` (Cmd+E) \n• __Underline__ (Cmd+U)",
+        category: 'Tutorial',
+        type: 'standard',
+      },
     ],
     nav: {
       study: 'Study',
@@ -154,6 +160,12 @@ export const translations = {
       {
         front: 'Como você deve escolher entre os botões **Esqueci / Difícil / Fácil**?',
         back: "Seja honesto! \n\n• Esqueci: Reinicia o ciclo do card. \n• Difícil: Revisa em breve para fixar. \n• Fácil: Joga o card mais para o futuro.",
+        category: 'Tutorial',
+        type: 'standard',
+      },
+      {
+        front: 'Como você pode **estilizar** seus cards para facilitar a leitura?',
+        back: "Use a barra de ferramentas ou atalhos: \n\n• **Negrito** (Cmd+B) \n• *Italic* (Cmd+I) \n• `Código` (Cmd+E) \n• __Sublinhado__ (Cmd+U)",
         category: 'Tutorial',
         type: 'standard',
       },

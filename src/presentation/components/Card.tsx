@@ -11,14 +11,20 @@ interface CardProps {
 
 export const Card: React.FC<CardProps> = ({ card, isFlipped, onFlip, onFlipComplete }) => {
   const renderText = (text: string) => {
-    // Basic Markdown support (Bold and Italic)
-    const parts = text.split(/(\*\*.*?\*\*|\*.*?\*)/);
+    // Extended Markdown support
+    const parts = text.split(/(\*\*.*?\*\*|\*.*?\*|`.*?`|__.*?__)/);
     return parts.map((part, i) => {
       if (part.startsWith('**') && part.endsWith('**')) {
         return <strong key={i} className="font-extrabold text-zinc-900 dark:text-white">{part.slice(2, -2)}</strong>;
       }
       if (part.startsWith('*') && part.endsWith('*')) {
         return <em key={i} className="italic opacity-90">{part.slice(1, -1)}</em>;
+      }
+      if (part.startsWith('`') && part.endsWith('`')) {
+        return <code key={i} className="bg-zinc-100 dark:bg-zinc-800 px-1.5 py-0.5 rounded text-sm font-mono text-pink-500 dark:text-pink-400 font-bold">{part.slice(1, -1)}</code>;
+      }
+      if (part.startsWith('__') && part.endsWith('__')) {
+        return <u key={i} className="underline decoration-zinc-400 underline-offset-4">{part.slice(2, -2)}</u>;
       }
       return part;
     });
