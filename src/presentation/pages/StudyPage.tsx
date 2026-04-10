@@ -262,7 +262,7 @@ export const StudyPage: React.FC = () => {
               >
                 <X size={20} className="mb-1 text-red-500" />
                 <span className="text-[10px] uppercase font-bold tracking-widest">{t.study.forgot}</span>
-                <span className="text-[9px] opacity-40 mt-1">[1]</span>
+                <span className="hidden md:inline text-[9px] opacity-40 mt-1">[1]</span>
               </button>
               
               <button
@@ -271,7 +271,7 @@ export const StudyPage: React.FC = () => {
               >
                 <RotateCcw size={20} className="mb-1 text-zinc-400" />
                 <span className="text-[10px] uppercase font-bold tracking-widest">{t.study.hard}</span>
-                <span className="text-[9px] opacity-40 mt-1">[2]</span>
+                <span className="hidden md:inline text-[9px] opacity-40 mt-1">[2]</span>
               </button>
 
               <button
@@ -280,7 +280,7 @@ export const StudyPage: React.FC = () => {
               >
                 <Check size={20} className="mb-1" />
                 <span className="text-[10px] uppercase font-bold tracking-widest">{t.study.easy}</span>
-                <span className="text-[9px] opacity-60 mt-1">[3]</span>
+                <span className="hidden md:inline text-[9px] opacity-60 mt-1">[3]</span>
               </button>
             </motion.div>
           ) : (

@@ -70,7 +70,7 @@ export const SettingsPage: React.FC = () => {
 
   const handleRestoreTutorial = () => {
     restoreTutorial();
-    showAlert('✓', language === 'pt' ? 'Cards de tutorial restaurados!' : 'Tutorial cards restored!');
+    showAlert('✓', t.settings.tutorialRestored);
   };
 
   const showConfirm = (title: string, message: string, onConfirm: () => void, variant: 'danger' | 'info' = 'danger') => {
@@ -101,12 +101,12 @@ export const SettingsPage: React.FC = () => {
       try {
         const result = importToStore(event.target?.result as string);
         if (result) {
-          showAlert('✓', language === 'pt' ? 'Dados restaurados com sucesso!' : 'Data restored successfully!');
+          showAlert('✓', t.settings.importSuccess);
         } else {
-          showAlert('Erro', language === 'pt' ? 'Arquivo de backup inválido ou corrompido.' : 'Invalid or corrupted backup file.');
+          showAlert('!', t.settings.importError);
         }
       } catch {
-        showAlert('Erro', language === 'pt' ? 'Falha ao processar o arquivo.' : 'Failed to process file.');
+        showAlert('!', t.settings.importError);
       }
     };
     reader.readAsText(file);
@@ -125,12 +125,12 @@ export const SettingsPage: React.FC = () => {
 
       <div className="mb-8">
         <h2 className="text-sm font-bold uppercase tracking-widest text-zinc-400 mb-1">{t.settings.title}</h2>
-        <p className="text-zinc-500 text-sm">Personalize sua experiência e gerencie seus dados.</p>
+        <p className="text-zinc-500 text-sm">{t.dashboard.subtitle}</p>
       </div>
       
       <div className="space-y-6">
         {/* Tema */}
-        <section className="p-6 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl shadow-sm">
+        <section className="p-6 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl shadow-sm hover:border-zinc-300 dark:hover:border-zinc-700 transition-colors">
           <div className="flex items-center gap-3 mb-4">
             <div className="w-8 h-8 bg-zinc-100 dark:bg-zinc-800 rounded-lg flex items-center justify-center text-zinc-900 dark:text-zinc-100">
               <Sun size={18} />
@@ -145,7 +145,7 @@ export const SettingsPage: React.FC = () => {
                 className={cn(
                   "flex-1 flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl font-bold transition-all border text-sm",
                   theme === value
-                    ? "bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 border-zinc-900 dark:border-white shadow-md"
+                    ? "bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 border-zinc-900 dark:border-white shadow-md scale-[1.02]"
                     : "bg-white dark:bg-zinc-800 text-zinc-500 border-zinc-200 dark:border-zinc-700 hover:border-zinc-300 dark:hover:border-zinc-600"
                 )}
               >
@@ -157,7 +157,7 @@ export const SettingsPage: React.FC = () => {
         </section>
 
         {/* Idioma */}
-        <section className="p-6 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl shadow-sm">
+        <section className="p-6 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl shadow-sm hover:border-zinc-300 dark:hover:border-zinc-700 transition-colors">
           <div className="flex items-center gap-3 mb-4">
             <div className="w-8 h-8 bg-zinc-100 dark:bg-zinc-800 rounded-lg flex items-center justify-center text-zinc-900 dark:text-zinc-100">
               <Languages size={18} />
@@ -169,7 +169,7 @@ export const SettingsPage: React.FC = () => {
               onClick={() => setLanguage('en')}
               className={cn(
                 "flex-1 px-4 py-2.5 rounded-xl font-bold transition-all border text-sm",
-                language === 'en' ? "bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 border-zinc-900 dark:border-white shadow-md" : "bg-white dark:bg-zinc-800 text-zinc-500 border-zinc-200 dark:border-zinc-700 hover:border-zinc-300 dark:hover:border-zinc-600"
+                language === 'en' ? "bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 border-zinc-900 dark:border-white shadow-md scale-[1.02]" : "bg-white dark:bg-zinc-800 text-zinc-500 border-zinc-200 dark:border-zinc-700 hover:border-zinc-300 dark:hover:border-zinc-600"
               )}
             >
               English
@@ -178,7 +178,7 @@ export const SettingsPage: React.FC = () => {
               onClick={() => setLanguage('pt')}
               className={cn(
                 "flex-1 px-4 py-2.5 rounded-xl font-bold transition-all border text-sm",
-                language === 'pt' ? "bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 border-zinc-900 dark:border-white shadow-md" : "bg-white dark:bg-zinc-800 text-zinc-500 border-zinc-200 dark:border-zinc-700 hover:border-zinc-300 dark:hover:border-zinc-600"
+                language === 'pt' ? "bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 border-zinc-900 dark:border-white shadow-md scale-[1.02]" : "bg-white dark:bg-zinc-800 text-zinc-500 border-zinc-200 dark:border-zinc-700 hover:border-zinc-300 dark:hover:border-zinc-600"
               )}
             >
               Português
@@ -187,7 +187,7 @@ export const SettingsPage: React.FC = () => {
         </section>
 
         {/* Gestão de Dados */}
-        <section className="p-6 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl shadow-sm">
+        <section className="p-6 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl shadow-sm hover:border-zinc-300 dark:hover:border-zinc-700 transition-colors">
           <div className="flex items-center gap-3 mb-2">
             <div className="w-8 h-8 bg-zinc-100 dark:bg-zinc-800 rounded-lg flex items-center justify-center text-zinc-900 dark:text-zinc-100">
               <Share2 size={18} />
@@ -210,7 +210,7 @@ export const SettingsPage: React.FC = () => {
         </section>
 
         {/* Onboarding */}
-        <section className="p-6 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl shadow-sm">
+        <section className="p-6 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl shadow-sm hover:border-zinc-300 dark:hover:border-zinc-700 transition-colors">
           <div className="flex items-center gap-3 mb-2">
             <div className="w-8 h-8 bg-zinc-100 dark:bg-zinc-800 rounded-lg flex items-center justify-center text-zinc-900 dark:text-zinc-100">
               <GraduationCap size={18} />
@@ -220,45 +220,25 @@ export const SettingsPage: React.FC = () => {
           <p className="text-sm text-zinc-500 mb-6 leading-relaxed">{t.settings.restoreTutorialDesc}</p>
           <button 
             onClick={handleRestoreTutorial}
-            className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-zinc-50 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 rounded-xl font-bold hover:bg-zinc-100 dark:hover:bg-zinc-700 transition-all border border-zinc-200 dark:border-zinc-700 text-xs uppercase tracking-widest"
+            className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-zinc-50 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 rounded-xl font-bold hover:bg-zinc-100 dark:hover:bg-zinc-700 transition-all border border-zinc-200 dark:border-zinc-700 text-xs uppercase tracking-widest active:scale-[0.98]"
           >
             <RotateCcw size={14} className="mr-1" />
             {t.settings.restoreTutorial}
           </button>
         </section>
 
-        {/* Google Drive — Coming Soon */}
-        <section className="p-6 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl shadow-sm opacity-60">
-          <div className="flex items-center justify-between mb-4">
-            <div className="flex items-center gap-3">
-              <div className="w-8 h-8 bg-blue-50 dark:bg-blue-950 rounded-lg flex items-center justify-center text-blue-600 dark:text-blue-400">
-                <Cloud size={18} />
-              </div>
-              <div>
-                <h3 className="text-lg font-bold text-zinc-900 dark:text-zinc-100">{t.settings.googleDrive}</h3>
-                <p className="text-[10px] uppercase tracking-widest font-bold text-amber-500">{t.settings.comingSoon}</p>
-              </div>
-            </div>
-          </div>
-          <p className="text-sm text-zinc-500 mb-6 leading-relaxed">{t.settings.googleDriveDesc}</p>
-          <button disabled className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-blue-600/50 text-white rounded-xl font-bold cursor-not-allowed">
-            <Cloud size={18} />
-            <span>{t.settings.connectDrive}</span>
-          </button>
-        </section>
-
         {/* Use em Qualquer Lugar */}
-        <section className="p-6 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 rounded-2xl shadow-xl overflow-hidden relative">
+        <section className="p-8 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 rounded-3xl shadow-xl overflow-hidden relative group">
           <div className="relative z-10">
             <h3 className="text-lg font-bold mb-6">{t.settings.multiTitle}</h3>
             
             {isInstallable && (
               <button 
                 onClick={install}
-                className="w-full mb-8 flex items-center justify-center gap-3 px-6 py-4 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white rounded-xl font-black uppercase tracking-tighter hover:bg-zinc-100 dark:hover:bg-zinc-800 transition-all shadow-2xl active:scale-[0.95]"
+                className="w-full mb-8 flex items-center justify-center gap-3 px-6 py-4 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white rounded-xl font-black uppercase tracking-widest hover:scale-[1.02] transition-all shadow-2xl active:scale-[0.95]"
               >
                 <Download size={20} strokeWidth={3} />
-                <span>Instalar no Celular</span>
+                <span>{t.settings.installButton}</span>
               </button>
             )}
 
@@ -292,7 +272,7 @@ export const SettingsPage: React.FC = () => {
               </div>
             </div>
           </div>
-          <div className="absolute -right-10 -bottom-10 w-40 h-40 bg-white/5 dark:bg-zinc-900/5 rounded-full blur-3xl pointer-events-none" />
+          <div className="absolute -right-10 -bottom-10 w-40 h-40 bg-white/5 dark:bg-zinc-900/5 rounded-full blur-3xl pointer-events-none group-hover:scale-150 transition-transform duration-700" />
         </section>
 
         {/* Zona de Perigo */}
@@ -308,14 +288,12 @@ export const SettingsPage: React.FC = () => {
             onClick={() => {
               showConfirm(
                 t.settings.danger,
-                language === 'pt'
-                  ? 'Tem certeza absoluta? Todos os seus cards e progresso serão perdidos.'
-                  : 'Are you absolutely sure? All your cards and progress will be lost.',
+                t.settings.confirmReset,
                 () => useMasteryStore.setState({ cards: getDefaultCards(language), studyHistory: [], streak: 0, lastStudyDate: null }),
                 'danger'
               );
             }}
-            className="w-full px-4 py-3 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 rounded-xl font-bold hover:bg-red-100 dark:hover:bg-red-950 transition-all text-xs uppercase tracking-widest"
+            className="w-full px-4 py-3 border border-red-200 dark:border-red-800 text-red-600 dark:text-red-400 rounded-xl font-bold hover:bg-red-100 dark:hover:bg-red-950 transition-all text-xs uppercase tracking-widest active:scale-[0.98]"
           >
             {t.settings.reset}
           </button>
