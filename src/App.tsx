@@ -8,8 +8,20 @@ import { SettingsPage } from './presentation/pages/SettingsPage';
 import { useMasteryStore } from './application/store/useMasteryStore';
 import { Button } from './presentation/components/ui/Button';
 
+import { Zap } from 'lucide-react';
+
+import { useTranslation } from './presentation/hooks/useTranslation';
+
+interface ErrorBoundaryProps {
+  children: ReactNode;
+}
+
+interface ErrorBoundaryState {
+  hasError: boolean;
+}
+
 const ErrorView = () => {
-  const { t } = useMasteryStore();
+  const { t } = useTranslation();
   return (
     <div className="min-h-screen flex items-center justify-center bg-zinc-50 dark:bg-zinc-950 p-8">
       <div className="text-center max-w-sm">
@@ -26,6 +38,7 @@ const ErrorView = () => {
           onClick={() => window.location.reload()}
           size="lg"
           fullWidth
+          aria-label={t.common.reload}
         >
           {t.common.reload}
         </Button>
@@ -34,24 +47,14 @@ const ErrorView = () => {
   );
 };
 
-const Zap = ({ size }: { size: number }) => (
-  <svg width={size} height={size} viewBox="0 0 24 24" fill="currentColor" xmlns="http://www.w3.org/2000/svg">
-    <path d="M13 2L3 14H12L11 22L21 10H12L13 2Z" />
-  </svg>
-);
-
-// Bypassing strict TS for ErrorBoundary to ensure app runs
-class ErrorBoundary extends (Component as any) {
-  constructor(props: any) {
-    super(props);
-    this.state = { hasError: false };
-  }
+class ErrorBoundary extends React.Component<React.PropsWithChildren<ErrorBoundaryProps>, ErrorBoundaryState> {
+  state: ErrorBoundaryState = { hasError: false };
 
   static getDerivedStateFromError() {
     return { hasError: true };
   }
 
-  componentDidCatch(error: Error, errorInfo: ErrorInfo) {
+  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
     console.error("Uncaught error:", error, errorInfo);
   }
 
@@ -60,7 +63,7 @@ class ErrorBoundary extends (Component as any) {
       return <ErrorView />;
     }
 
-    return this.props.children;
+    return (this as any).props.children;
   }
 }
 

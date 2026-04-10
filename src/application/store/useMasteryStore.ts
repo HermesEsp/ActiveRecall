@@ -2,9 +2,9 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import { Flashcard, MasteryLevel, FlashcardType } from '../../domain/entities/Flashcard';
 import { StudyLog } from '../../domain/entities/StudyLog';
-import { translations, Language } from '../../translations';
 import { SRSEngine, ReviewGrade } from '../../domain/services/SRSEngine';
 import { MigrationService } from '../../domain/services/MigrationService';
+import { translations, Language } from '../../translations';
 
 export { type ReviewGrade };
 
@@ -22,36 +22,10 @@ export function getDefaultCards(lang: Language): Flashcard[] {
   return MigrationService.migrateAll(cards);
 }
 
-function applyTheme(theme: 'system' | 'light' | 'dark') {
-  if (typeof document === 'undefined') return;
-  const root = document.documentElement;
-  if (theme === 'system') {
-    const prefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
-    root.classList.toggle('dark', prefersDark);
-  } else {
-    root.classList.toggle('dark', theme === 'dark');
-  }
-}
-
-export type Theme = 'system' | 'light' | 'dark';
-
-export interface UserProfile {
-  name: string;
-  email: string;
-  streak: number;
-  language: Language;
-  theme: Theme;
-}
-
 interface MasteryState {
   cards: Flashcard[];
-  user: UserProfile;
   lastStudyDate: string | null;
   studyHistory: StudyLog[];
-  setLanguage: (lang: Language) => void;
-  setTheme: (theme: Theme) => void;
-  setUser: (user: UserProfile) => void;
-  t: typeof translations.en;
   addCard: (front: string, back: string, category: string, type?: FlashcardType) => void;
   updateCard: (id: string, front: string, back: string, category: string, type?: FlashcardType) => void;
   deleteCard: (id: string) => void;
@@ -61,33 +35,22 @@ interface MasteryState {
   migrateAll: () => void;
   exportData: () => string;
   importData: (jsonData: string) => boolean;
-  restoreTutorial: () => void;
-  resetAllData: () => void;
+  restoreTutorial: (lang: Language) => void;
+  resetAllData: (lang: Language) => void;
 }
+
+const getInitialLanguage = (): Language => {
+  if (typeof navigator === 'undefined') return 'en';
+  const systemLang = navigator.language.split('-')[0];
+  return (systemLang === 'pt' ? 'pt' : 'en') as Language;
+};
 
 export const useMasteryStore = create<MasteryState>()(
   persist(
     (set, get) => ({
-      cards: getDefaultCards('en'),
-      user: {
-        name: 'User',
-        email: 'user@example.com',
-        streak: 0,
-        language: 'en',
-        theme: 'system'
-      },
+      cards: getDefaultCards(getInitialLanguage()),
       lastStudyDate: null,
       studyHistory: [],
-      setLanguage: (lang) => set((state) => ({ 
-        user: { ...state.user, language: lang },
-        t: translations[lang] 
-      })),
-      setTheme: (theme) => {
-        set((state) => ({ user: { ...state.user, theme } }));
-        applyTheme(theme);
-      },
-      setUser: (user) => set({ user }),
-      t: translations.en,
       migrateAll: () => {
         set(state => ({ cards: MigrationService.migrateAll(state.cards) }));
       },
@@ -124,22 +87,6 @@ export const useMasteryStore = create<MasteryState>()(
         const todayStr = now.toISOString().split('T')[0];
         
         set((state) => {
-          let newStreak = state.user.streak;
-          let newLastStudyDate = state.lastStudyDate;
-
-          if (newLastStudyDate !== todayStr) {
-            const yesterday = new Date();
-            yesterday.setDate(yesterday.getDate() - 1);
-            const yesterdayStr = yesterday.toISOString().split('T')[0];
-            
-            if (newLastStudyDate === yesterdayStr) {
-              newStreak += 1;
-            } else {
-              newStreak = 1;
-            }
-            newLastStudyDate = todayStr;
-          }
-
           const newHistory = [...state.studyHistory];
           const todayEntry = newHistory.find(h => h.date === todayStr);
           if (todayEntry) todayEntry.count += 1;
@@ -164,8 +111,7 @@ export const useMasteryStore = create<MasteryState>()(
 
           return {
             cards: updatedCards,
-            user: { ...state.user, streak: newStreak },
-            lastStudyDate: newLastStudyDate,
+            lastStudyDate: todayStr,
             studyHistory: newHistory,
           };
         });
@@ -186,14 +132,12 @@ export const useMasteryStore = create<MasteryState>()(
       },
       getCategories: () => {
         const { cards } = get();
-        const categories = Array.from(new Set(cards.map(c => c.category)));
-        return categories; // Return raw categories, All is handled in UI
+        return Array.from(new Set(cards.map(c => c.category)));
       },
       exportData: () => {
         const state = get();
         return JSON.stringify({
           cards: state.cards,
-          user: state.user,
           lastStudyDate: state.lastStudyDate,
           studyHistory: state.studyHistory,
           version: '1.0.1'
@@ -206,7 +150,6 @@ export const useMasteryStore = create<MasteryState>()(
           
           set({
             cards: MigrationService.migrateAll(data.cards),
-            user: data.user || data.profile || { name: 'User', email: '', streak: 0, language: 'en', theme: 'system' },
             lastStudyDate: data.lastStudyDate || null,
             studyHistory: data.studyHistory || [],
           });
@@ -215,9 +158,9 @@ export const useMasteryStore = create<MasteryState>()(
           return false;
         }
       },
-      restoreTutorial: () => {
-        const { user, cards: currentCards } = get();
-        const tutorialCards = getDefaultCards(user.language);
+      restoreTutorial: (lang) => {
+        const { cards: currentCards } = get();
+        const tutorialCards = getDefaultCards(lang);
         const missingTutorials = tutorialCards.filter(
           tc => !currentCards.some(cc => cc.front === tc.front)
         );
@@ -225,36 +168,21 @@ export const useMasteryStore = create<MasteryState>()(
           set({ cards: [...currentCards, ...missingTutorials] });
         }
       },
-      resetAllData: () => {
-        set((state) => ({
-          cards: getDefaultCards(state.user.language),
-          user: { ...state.user, streak: 0 },
+      resetAllData: (lang) => {
+        set({
+          cards: getDefaultCards(lang),
           studyHistory: [],
           lastStudyDate: null
-        }));
+        });
       }
     }),
     {
       name: 'flashcard-mastery-storage',
-      partialize: (state) => {
-        const { t, ...rest } = state;
-        return rest;
-      },
       onRehydrateStorage: () => (state) => {
-        if (state) {
-          if (state.cards.some(c => !c.srsVersion)) {
-            state.cards = MigrationService.migrateAll(state.cards);
-          }
-          state.t = translations[state.user?.language || 'en'];
-          applyTheme(state.user?.theme || 'system');
+        if (state && state.cards.some(c => !c.srsVersion)) {
+          state.cards = MigrationService.migrateAll(state.cards);
         }
       }
     }
   )
 );
-
-if (typeof window !== 'undefined') {
-  window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', () => {
-    if (useMasteryStore.getState().user.theme === 'system') applyTheme('system');
-  });
-}

@@ -5,6 +5,7 @@ import {
   Layers, Zap, Sparkles, MousePointer2, Scissors
 } from 'lucide-react';
 import { useMasteryStore } from '../../application/store/useMasteryStore';
+import { useTranslation } from '../hooks/useTranslation';
 import { useStudySessionStore } from '../../application/store/useStudySessionStore';
 import { Card as CardComponent } from '../components/Card';
 import { Label, PageTitle } from '../components/ui/Typography';
@@ -39,7 +40,8 @@ const CategoryFilter = ({ categories, selected, onSelect, t }: any) => (
 );
 
 export const LibraryPage: React.FC = () => {
-  const { cards, addCard, deleteCard, updateCard, getCategories, t } = useMasteryStore();
+  const { cards, addCard, deleteCard, updateCard, getCategories } = useMasteryStore();
+  const { t } = useTranslation();
   const { startSession } = useStudySessionStore();
   
   const [front, setFront] = useState('');
@@ -254,17 +256,23 @@ export const LibraryPage: React.FC = () => {
 
         <div className="space-y-24">
           {Object.entries(groupedCards).map(([category, categoryCards]: any) => (
-            <div key={category} className="group">
+            <div key={category}>
               <GroupDivider label={category} count={categoryCards.length} />
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
                 {categoryCards.map((card: any) => (
-                  <div key={card.id} className="bg-white dark:bg-zinc-900 border border-zinc-200/60 dark:border-zinc-800/60 rounded-xl p-8 hover:border-zinc-900 dark:hover:border-zinc-100 transition-all hover:shadow-2xl flex flex-col min-h-[280px] group/card">
+                  <div key={card.id} className="bg-white dark:bg-zinc-900 border border-zinc-200/60 dark:border-zinc-800/60 rounded-xl p-8 hover:border-zinc-900 dark:hover:border-zinc-100 transition-all hover:shadow-2xl flex flex-col min-h-[280px] group relative">
                     <div className="flex justify-between items-start mb-8">
-                      <span className="text-[9px] font-black uppercase tracking-[0.2em] px-3 py-1.5 bg-zinc-50 dark:bg-zinc-800 text-zinc-400 rounded-lg group-hover/card:bg-zinc-900 group-hover/card:text-white transition-colors">{card.category}</span>
-                      <div className="flex items-center gap-1 opacity-0 group-hover/card:opacity-100 transition-opacity">
-                        <Button variant="ghost" size="sm" onClick={() => { setViewingCard(card); setIsFlipped(false); }} className="p-2"><Eye size={18} /></Button>
-                        <Button variant="ghost" size="sm" onClick={() => startEdit(card)} className="p-2"><Edit2 size={18} /></Button>
-                        <Button variant="ghost" size="sm" onClick={() => deleteCard(card.id)} className="p-2 hover:text-red-500"><Trash2 size={18} /></Button>
+                      <span className="text-[9px] font-black uppercase tracking-[0.2em] px-3 py-1.5 bg-zinc-50 dark:bg-zinc-800 text-zinc-400 rounded-lg group-hover:bg-zinc-900 group-hover:text-white transition-colors">{card.category}</span>
+                      <div className="flex items-center gap-1 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity">
+                        <Button variant="ghost" size="sm" onClick={() => { setViewingCard(card); setIsFlipped(false); }} className="p-2" aria-label={t.library.quickPreview}>
+                          <Eye size={18} />
+                        </Button>
+                        <Button variant="ghost" size="sm" onClick={() => startEdit(card)} className="p-2" aria-label={t.library.update}>
+                          <Edit2 size={18} />
+                        </Button>
+                        <Button variant="ghost" size="sm" onClick={() => deleteCard(card.id)} className="p-2 hover:text-red-500" aria-label={t.common.delete}>
+                          <Trash2 size={18} />
+                        </Button>
                       </div>
                     </div>
                     <h4 className="text-xl font-black text-zinc-900 dark:text-zinc-100 mb-4 line-clamp-3 leading-tight tracking-tight">{card.front}</h4>

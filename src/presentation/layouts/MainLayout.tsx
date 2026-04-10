@@ -68,8 +68,12 @@ const Kbd = ({ children }: { children: React.ReactNode }) => (
   </kbd>
 );
 
+import { useUserStore } from '../../application/store/useUserStore';
+import { useTranslation } from '../hooks/useTranslation';
+
 export const MainLayout: React.FC = () => {
-  const { t, user } = useMasteryStore();
+  const { user } = useUserStore();
+  const { t } = useTranslation();
 
   return (
     <div className="min-h-screen bg-zinc-50 dark:bg-zinc-950 text-zinc-900 dark:text-zinc-50 selection:bg-zinc-900 selection:text-white dark:selection:bg-white dark:selection:text-zinc-900 font-sans antialiased">
@@ -88,7 +92,7 @@ export const MainLayout: React.FC = () => {
             </div>
             <div className="flex flex-col">
               <span className="text-sm font-black tracking-tightest uppercase leading-none">ActiveRecall</span>
-              <span className="text-[8px] font-bold tracking-[0.3em] uppercase text-zinc-400 mt-1">{t.common.version.split(' ')[0]}</span>
+              <span className="text-[8px] font-bold tracking-[0.3em] uppercase text-emerald-500/80 mt-1">{t.common.version}</span>
             </div>
           </div>
 
@@ -105,7 +109,7 @@ export const MainLayout: React.FC = () => {
            <div className="hidden md:flex items-center gap-3 px-4 py-2 bg-zinc-100/50 dark:bg-white/5 border border-zinc-200 dark:border-white/5 rounded-lg text-zinc-400 cursor-pointer hover:border-zinc-400 dark:hover:border-zinc-500 transition-all">
               <Search size={14} />
               <div className="flex items-center gap-1.5">
-                 <span className="text-[9px] font-bold uppercase tracking-widest">Search</span>
+                 <span className="text-[9px] font-bold uppercase tracking-widest">{t.common.search}</span>
                  <div className="flex gap-0.5"><Kbd>⌘</Kbd><Kbd>K</Kbd></div>
               </div>
            </div>
@@ -137,18 +141,18 @@ export const MainLayout: React.FC = () => {
       <footer className="fixed bottom-6 left-1/2 -translate-x-1/2 hidden lg:flex items-center gap-8 py-3 px-8 bg-white/60 dark:bg-zinc-900/60 text-zinc-900 dark:text-white rounded-full shadow-2xl border border-zinc-200 dark:border-white/5 backdrop-blur-xl z-40 transition-all">
         <div className="flex items-center gap-3 border-r border-zinc-200 dark:border-white/10 pr-8">
            <Terminal size={14} className="text-zinc-400" />
-           <span className="text-[9px] font-black uppercase tracking-[0.2em] opacity-40">Tactical Bar</span>
+           <span className="text-[9px] font-black uppercase tracking-[0.2em] opacity-40">{t.common.tacticalBar}</span>
         </div>
         
         <div className="flex items-center gap-6">
            <div className="flex items-center gap-2">
               <Kbd>SPACE</Kbd>
-              <span className="text-[8px] font-black uppercase opacity-40">Flip</span>
+              <span className="text-[8px] font-black uppercase opacity-40">{t.common.flip}</span>
            </div>
            <div className="w-1 h-1 rounded-full bg-zinc-200 dark:bg-zinc-800" />
            <div className="flex items-center gap-2">
               <div className="flex gap-0.5"><Kbd>1</Kbd><Kbd>2</Kbd><Kbd>3</Kbd></div>
-              <span className="text-[8px] font-black uppercase opacity-40">Rate</span>
+              <span className="text-[8px] font-black uppercase opacity-40">{t.common.rate}</span>
            </div>
         </div>
       </footer>

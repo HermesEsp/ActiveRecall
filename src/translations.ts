@@ -6,11 +6,15 @@ export const translations = {
       cancel: 'Cancel',
       save: 'Save Changes',
       delete: 'Delete',
-      version: 'Ver. 4.2.0-STABLE',
-      shortcuts: 'Key Shortcuts: [Space] Flip, [1-3] Rate',
-      errorTitle: 'Something went wrong',
-      errorDesc: 'An unexpected error occurred. Please reload the page.',
-      reload: 'Reload'
+      version: 'v5.1.2-GOLD',
+      search: 'Search',
+      tacticalBar: 'Tactical Bar',
+      flip: 'Flip',
+      rate: 'Rate',
+      toReveal: 'to reveal',
+      errorTitle: 'System Alert',
+      errorDesc: 'An unexpected exception occurred. Please re-initialize the interface.',
+      reload: 'Re-Initialize'
     },
     nav: {
       dashboard: 'Dashboard',
@@ -29,7 +33,8 @@ export const translations = {
       viewAll: 'View Library',
       startStudying: 'Start Session',
       days: 'Days',
-      allCaughtUp: 'Active',
+      allCaughtUp: 'All Caught Up',
+      consistencyTracker: 'Consistency Tracker',
       future: 'Future'
     },
     study: {
@@ -67,11 +72,12 @@ export const translations = {
       frontPlaceholder: 'Enter question or concept...',
       backPlaceholder: 'Enter answer or detailed explanation...',
       categoryLabel: 'Category / Tag',
+      generalPlaceholder: 'General...',
       bold: 'Bold',
       italic: 'Italic',
       underline: 'Underline',
       code: 'Code',
-      clozeLabel: 'Lacuna',
+      clozeLabel: 'Cloze',
       tapToFlip: 'Interact to reveal',
       quickPreview: 'Factory Preview'
     },
@@ -81,6 +87,8 @@ export const translations = {
       profile: 'User Identity',
       name: 'Display Name',
       language: 'Interface Language',
+      langEn: 'English',
+      langPt: 'Portuguese',
       theme: 'Visual Interface',
       themeLight: 'Industrial Light',
       themeDark: 'High Contrast Dark',
@@ -106,13 +114,18 @@ export const translations = {
       save: 'Sync Profile',
       alwaysFree: 'Sovereign & Free',
       alwaysFreeDesc: 'ActiveRecall is open source and will always be 100% free for everyone.',
-      installApp: 'Install Anywhere',
+      installApp: 'Install Everywhere',
       localStorage: 'Local Privacy',
-      storageDesc: 'Your data never leaves your device. Total privacy by design.'
+      storageDesc: 'Your data never leaves your device. Total privacy by design.',
+      availableEverywhere: 'Available Everywhere',
+      webFirstAccess: 'Web First Access',
+      uploadBackup: 'Upload backup to restore data.'
     },
     defaultCards: [
-      { front: 'What is Spaced Repetition?', back: 'A learning technique that uses increasing intervals of time between reviews of previously learned material.', category: 'General', type: 'standard' },
-      { front: 'ActiveRecall was created by?', back: 'Google Deepmind team (Antigravity).', category: 'General', type: 'standard' }
+      { front: 'Welcome! How do you reveal the answer to this card?', back: 'Press **SPACE** on your keyboard or click anywhere on the card.', category: 'Tutorial', type: 'standard' },
+      { front: 'How do you rate your memory after revealing the answer?', back: 'Use keys **1** (Forgot), **2** (Hard), or **3** (Easy) to schedule the next review.', category: 'Tutorial', type: 'standard' },
+      { front: 'What are {{Cloze}} cards?', back: 'They are cards where specific parts are hidden. You can create them by wrapping text in `{{double braces}}`.', category: 'Tutorial', type: 'cloze' },
+      { front: 'Where is your Knowledge Base stored?', back: 'Directly in your browser\'s LocalStorage. No servers, 100% private.', category: 'Tutorial', type: 'standard' }
     ]
   },
   pt: {
@@ -120,11 +133,15 @@ export const translations = {
       cancel: 'Cancelar',
       save: 'Salvar Alterações',
       delete: 'Excluir',
-      version: 'Ver. 4.2.0-ESTÁVEL',
-      shortcuts: 'Atalhos: [Espaço] Virar, [1-3] Avaliar',
-      errorTitle: 'Algo deu errado',
-      errorDesc: 'Ocorreu um erro inesperado. Por favor, recarregue a página.',
-      reload: 'Recarregar'
+      version: 'v5.1.2-GOLD',
+      search: 'Buscar',
+      tacticalBar: 'Barra Tática',
+      flip: 'Virar',
+      rate: 'Avaliar',
+      toReveal: 'para revelar',
+      errorTitle: 'Alerta do Sistema',
+      errorDesc: 'Ocorreu uma exceção inesperada. Por favor, reinicialize a interface.',
+      reload: 'Reinicializar'
     },
     nav: {
       dashboard: 'Painel',
@@ -143,7 +160,8 @@ export const translations = {
       viewAll: 'Ver Biblioteca',
       startStudying: 'Iniciar Sessão',
       days: 'Dias',
-      allCaughtUp: 'Ativo',
+      allCaughtUp: 'Tudo em Dia',
+      consistencyTracker: 'Rastreador de Consistência',
       future: 'Futuro'
     },
     study: {
@@ -181,11 +199,12 @@ export const translations = {
       frontPlaceholder: 'Digite a pergunta ou conceito...',
       backPlaceholder: 'Digite a resposta ou explicação detalhada...',
       categoryLabel: 'Categoria / Tag',
+      generalPlaceholder: 'Geral...',
       bold: 'Negrito',
       italic: 'Itálico',
       underline: 'Sublinhado',
       code: 'Código',
-      clozeLabel: 'Lacuna',
+      clozeLabel: 'Cloze',
       tapToFlip: 'Interaja para revelar',
       quickPreview: 'Prévia de Fábrica'
     },
@@ -195,6 +214,8 @@ export const translations = {
       profile: 'Identidade do Usuário',
       name: 'Nome de Exibição',
       language: 'Idioma da Interface',
+      langEn: 'Inglês',
+      langPt: 'Português',
       theme: 'Interface Visual',
       themeLight: 'Luz Industrial',
       themeDark: 'Escuro de Alto Contraste',
@@ -222,11 +243,16 @@ export const translations = {
       alwaysFreeDesc: 'O ActiveRecall é código aberto e sempre será 100% gratuito para todos.',
       installApp: 'Instale em Qualquer Lugar',
       localStorage: 'Privacidade Local',
-      storageDesc: 'Seus dados nunca saem do seu dispositivo. Privacidade total.'
+      storageDesc: 'Seus dados nunca saem do seu dispositivo. Privacidade total.',
+      availableEverywhere: 'Disponível em Qualquer Lugar',
+      webFirstAccess: 'Acesso Web-First',
+      uploadBackup: 'Carregue o backup para restaurar.'
     },
     defaultCards: [
-      { front: 'O que é Repetição Espaçada?', back: 'Uma técnica de aprendizado que utiliza intervalos de tempo crescentes entre as revisões de materiais aprendidos anteriormente.', category: 'Geral', type: 'standard' },
-      { front: 'ActiveRecall foi criado por?', back: 'Equipe do Google Deepmind (Antigravity).', category: 'Geral', type: 'standard' }
+      { front: 'Bem-vindo! Como você revela a resposta deste card?', back: 'Pressione **ESPAÇO** no teclado ou clique em qualquer lugar do card.', category: 'Tutorial', type: 'standard' },
+      { front: 'Como você avalia sua memória após ver a resposta?', back: 'Use as teclas **1** (Esqueci), **2** (Difícil) ou **3** (Fácil) para agendar a próxima revisão.', category: 'Tutorial', type: 'standard' },
+      { front: 'O que são cards de {{Lacuna}} (Cloze)?', back: 'São cards onde partes específicas ficam ocultas. Crie-os envolvendo o texto com `{{chaves duplas}}`.', category: 'Tutorial', type: 'cloze' },
+      { front: 'Onde sua Base de Conhecimento fica guardada?', back: 'Diretamente no LocalStorage do seu navegador. Sem servidores, 100% privado.', category: 'Tutorial', type: 'standard' }
     ]
   }
 };

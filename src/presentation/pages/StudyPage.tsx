@@ -25,8 +25,12 @@ const Kbd = ({ children, className = "" }: { children: React.ReactNode, classNam
   </kbd>
 );
 
+import { useTranslation } from '../hooks/useTranslation';
+import { useKeyboardShortcuts } from '../hooks/useKeyboardShortcuts';
+
 export const StudyPage: React.FC = () => {
-  const { getStudyCards, updateMastery, getCategories, t, cards } = useMasteryStore();
+  const { getStudyCards, updateMastery, getCategories, cards } = useMasteryStore();
+  const { t } = useTranslation();
   const {
     isActive,
     queue,
@@ -57,6 +61,27 @@ export const StudyPage: React.FC = () => {
     evaluateCard(currentCardId, grade);
     setIsFlipped(false);
   };
+
+  // Keyboard Shortcuts
+  useKeyboardShortcuts({
+    ' ': () => {
+      if (isActive && !isFinished()) {
+        setIsFlipped(prev => !prev);
+      }
+    },
+    '1': () => {
+      if (isActive && isFlipped && !isFinished()) handleNext(0);
+    },
+    '2': () => {
+      if (isActive && isFlipped && !isFinished()) handleNext(3);
+    },
+    '3': () => {
+      if (isActive && isFlipped && !isFinished()) handleNext(5);
+    },
+    'Escape': () => {
+      if (isActive) endSession();
+    }
+  });
 
   if (!isActive) {
     const categories = getCategories();
@@ -151,7 +176,7 @@ export const StudyPage: React.FC = () => {
                </div>
                <div className="flex items-center gap-2 mt-2">
                   <Kbd className="bg-white dark:bg-zinc-900 border-zinc-900 dark:border-white text-zinc-900 dark:text-white px-4 py-2 text-xs">SPACE</Kbd>
-                  <span className="text-[9px] font-black uppercase tracking-widest text-zinc-400">to reveal</span>
+                  <span className="text-[9px] font-black uppercase tracking-widest text-zinc-400">{t.common.toReveal}</span>
                </div>
             </motion.div>
           ) : (

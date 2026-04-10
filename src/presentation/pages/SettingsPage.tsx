@@ -21,13 +21,18 @@ import {
   Globe
 } from 'lucide-react';
 import { useMasteryStore } from '../../application/store/useMasteryStore';
+import { useUserStore } from '../../application/store/useUserStore';
+import { useTranslation } from '../hooks/useTranslation';
 import { Label, PageTitle } from '../components/ui/Typography';
 import { Button } from '../components/ui/Button';
 import { Input } from '../components/ui/Input';
 import { Modal } from '../components/ui/Modal';
 
 export const SettingsPage: React.FC = () => {
-  const { user, setUser, resetAllData, t, setLanguage, setTheme, exportData, importData, restoreTutorial } = useMasteryStore();
+  const { resetAllData, exportData, importData, restoreTutorial } = useMasteryStore();
+  const { user, setUser, setLanguage, setTheme } = useUserStore();
+  const { t, language } = useTranslation();
+  
   const [newName, setNewName] = useState(user.name);
   const [showResetConfirm, setShowResetConfirm] = useState(false);
 
@@ -36,7 +41,7 @@ export const SettingsPage: React.FC = () => {
   };
 
   const handleReset = () => {
-    resetAllData();
+    resetAllData(language);
     setShowResetConfirm(false);
   };
 
@@ -158,14 +163,14 @@ export const SettingsPage: React.FC = () => {
           {/* Use Everywhere Section - RESTORED & ENHANCED */}
           <section className="bg-zinc-100 dark:bg-zinc-800/30 rounded-xl p-1 shadow-sm overflow-hidden">
              <div className="bg-white dark:bg-zinc-900 rounded-lg p-10 md:p-14">
-                <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 mb-16">
-                   <div>
-                      <span className="text-[10px] font-black uppercase tracking-[0.4em] text-emerald-500 mb-2 block animate-pulse">Available Everywhere</span>
+                    <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 mb-16">
+                   <div className="flex flex-col">
+                      <span className="text-[10px] font-black uppercase tracking-[0.4em] text-emerald-500 mb-2 block animate-pulse">{t.settings.availableEverywhere}</span>
                       <h2 className="text-3xl md:text-4xl font-black tracking-tighter">{t.settings.pwa}</h2>
                    </div>
                    <div className="flex items-center gap-3 bg-zinc-50 dark:bg-zinc-800 px-6 py-3 rounded-xl border border-zinc-100 dark:border-zinc-700">
                       <Globe size={18} className="text-emerald-500" />
-                      <span className="text-xs font-black uppercase tracking-widest">Web First Access</span>
+                      <span className="text-xs font-black uppercase tracking-widest">{t.settings.webFirstAccess}</span>
                    </div>
                 </div>
 
@@ -221,7 +226,7 @@ export const SettingsPage: React.FC = () => {
                    <div className="p-10">
                      <div className="w-12 h-12 bg-emerald-50 dark:bg-emerald-900/20 text-emerald-600 rounded-lg flex items-center justify-center mb-6"><Upload size={24} /></div>
                      <h4 className="text-sm font-black uppercase tracking-widest mb-2">{t.settings.import}</h4>
-                     <p className="text-xs text-zinc-500 font-medium leading-relaxed mb-8">{t.settings.importSuccess ? 'Upload backup to restore data.' : ''}</p>
+                     <p className="text-xs text-zinc-500 font-medium leading-relaxed mb-8">{t.settings.uploadBackup}</p>
                      <input type="file" id="import-file" className="hidden" accept=".json" onChange={handleImport} />
                      <Button variant="secondary" fullWidth onClick={() => document.getElementById('import-file')?.click()}>{t.settings.import}</Button>
                    </div>
@@ -234,7 +239,7 @@ export const SettingsPage: React.FC = () => {
                 <div className="w-16 h-16 bg-white dark:bg-orange-900/20 rounded-full flex items-center justify-center border border-orange-100 shadow-sm mb-6"><Sparkles className="text-orange-500" size={28} /></div>
                 <h4 className="text-sm font-black uppercase tracking-widest mb-4">{t.settings.restoreTutorial}</h4>
                 <p className="text-xs text-zinc-500 font-medium mb-8 leading-relaxed italic">{t.settings.restoreTutorialDesc}</p>
-                <button onClick={() => { restoreTutorial(); alert(t.settings.tutorialRestored); }}
+                <button onClick={() => { restoreTutorial(language); alert(t.settings.tutorialRestored); }}
                   className="w-full mt-auto py-4 bg-orange-500 text-white rounded-xl font-black uppercase tracking-widest text-[10px] shadow-lg shadow-orange-500/30 hover:bg-orange-600 transition-all">
                   {t.settings.restoreTutorial}
                 </button>

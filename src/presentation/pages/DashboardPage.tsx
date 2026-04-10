@@ -25,6 +25,8 @@ import {
   Pie
 } from 'recharts';
 import { useMasteryStore } from '../../application/store/useMasteryStore';
+import { useUserStore } from '../../application/store/useUserStore';
+import { useTranslation } from '../hooks/useTranslation';
 import { Label, PageTitle } from '../components/ui/Typography';
 import { Button } from '../components/ui/Button';
 
@@ -46,7 +48,9 @@ const StatCard = ({ icon: Icon, label, value, colorClass, gradientClass }: any) 
 );
 
 export const DashboardPage: React.FC = () => {
-  const { user, cards, studyHistory, t } = useMasteryStore();
+  const { cards, studyHistory } = useMasteryStore();
+  const { user } = useUserStore();
+  const { t } = useTranslation();
 
   const masteredCount = cards.filter(c => c.masteryLevel >= 4).length;
   const learningCount = cards.length - masteredCount;
@@ -134,7 +138,7 @@ export const DashboardPage: React.FC = () => {
                 <Calendar className="text-zinc-400" size={20} />
                 {t.dashboard.studyVolume}
               </h3>
-              <p className="text-zinc-500 text-xs font-bold uppercase tracking-widest mt-1">Consistency Tracker</p>
+              <p className="text-zinc-500 text-xs font-bold uppercase tracking-widest mt-1">{t.dashboard.consistencyTracker}</p>
             </div>
           </div>
           <div className="h-[300px] w-full">
