@@ -52,21 +52,32 @@ export const DashboardPage: React.FC = () => {
         <h2 className="text-zinc-500 text-[10px] font-black uppercase tracking-[0.2em] mb-4">{t.dashboard.startPrompt}</h2>
         <div className="bg-zinc-900 dark:bg-zinc-100 p-10 md:p-16 rounded-[40px] shadow-2xl shadow-zinc-200 dark:shadow-none relative overflow-hidden group">
           <div className="relative z-10 flex flex-col items-center gap-8">
-            <h1 className="text-4xl md:text-6xl font-black text-white dark:text-zinc-900 tracking-tight leading-tight">
+            <h1 className="text-4xl md:text-6xl font-black text-white dark:text-zinc-900 tracking-tighter italic">
               {cardsDue > 0 
                 ? t.dashboard.reviewCount.replace('{count}', cardsDue.toString())
                 : t.dashboard.allCaughtUp}
             </h1>
             
-            {cardsDue > 0 && (
-              <button 
+            <div className="flex flex-col gap-4 w-full max-w-xs">
+              <button
                 onClick={() => navigate('/study')}
-                className="w-full md:w-auto px-16 py-6 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white rounded-[24px] font-black text-xl hover:scale-[1.05] active:scale-[0.95] transition-all shadow-xl flex items-center justify-center gap-4 group/btn"
+                disabled={cardsDue === 0}
+                className="w-full flex items-center justify-center gap-3 px-8 py-5 bg-white dark:bg-zinc-900 text-zinc-900 dark:text-white rounded-2xl font-black text-sm uppercase tracking-widest hover:scale-105 active:scale-95 transition-all shadow-xl disabled:opacity-20 disabled:hover:scale-100"
               >
-                <span>{t.study.start}</span>
-                <Play size={24} fill="currentColor" className="group-hover/btn:translate-x-2 transition-transform" />
+                <Play size={20} fill="currentColor" />
+                {t.study.title}
               </button>
-            )}
+
+              {cardsDue === 0 && (
+                <button
+                  onClick={() => navigate('/study?all=true')}
+                  className="w-full flex items-center justify-center gap-3 px-8 py-4 bg-zinc-800 dark:bg-zinc-200 text-zinc-300 dark:text-zinc-600 rounded-2xl font-bold text-xs uppercase tracking-widest hover:bg-zinc-700 dark:hover:bg-zinc-300 transition-all"
+                >
+                  <Calendar size={16} />
+                  {t.dashboard.cramMode}
+                </button>
+              )}
+            </div>
           </div>
           <div className="absolute top-0 right-0 w-64 h-64 bg-white/5 dark:bg-zinc-900/5 rounded-full -translate-y-1/2 translate-x-1/2 blur-3xl group-hover:bg-white/10 transition-colors" />
         </div>

@@ -1,12 +1,15 @@
 import React, { useState, useEffect, useCallback } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { Check, X, RotateCcw, BookOpen, Play, Info, GraduationCap } from 'lucide-react';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { useMasteryStore } from '../../application/store/useMasteryStore';
 import { useStudySessionStore } from '../../application/store/useStudySessionStore';
 import { Card } from '../components/Card';
 import { ReviewGrade } from '../../domain/services/SRSEngine';
 
 export const StudyPage: React.FC = () => {
+  const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { getStudyCards, updateMastery, getCategories, t, cards } = useMasteryStore();
   const { 
     isActive, 

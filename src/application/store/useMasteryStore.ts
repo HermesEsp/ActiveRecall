@@ -52,6 +52,7 @@ interface MasteryState {
   migrateAll: () => void;
   exportData: () => string;
   importData: (jsonData: string) => boolean;
+  restoreTutorial: () => void;
 }
 
 export const useMasteryStore = create<MasteryState>()(
@@ -205,6 +206,19 @@ export const useMasteryStore = create<MasteryState>()(
         } catch (e) {
           console.error('Import failed', e);
           return false;
+        }
+      },
+      restoreTutorial: () => {
+        const { language, cards: currentCards } = get();
+        const tutorialCards = getDefaultCards(language);
+        
+        // Don't add if cards with same content already exist
+        const missingTutorials = tutorialCards.filter(
+          tc => !currentCards.some(cc => cc.front === tc.front)
+        );
+        
+        if (missingTutorials.length > 0) {
+          set({ cards: [...currentCards, ...missingTutorials] });
         }
       }
     }),

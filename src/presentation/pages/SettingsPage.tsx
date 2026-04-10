@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { useMasteryStore, getDefaultCards } from '../../application/store/useMasteryStore';
 import { cn } from '../../lib/utils';
 import { usePWAInstall } from '../hooks/usePWAInstall';
-import { Download, Globe, Smartphone, Database, Trash2, Languages, Share2, Cloud, Sun, Moon, Monitor } from 'lucide-react';
+import { Download, Globe, Smartphone, Database, Trash2, Languages, Share2, Cloud, Sun, Moon, Monitor, GraduationCap, RotateCcw } from 'lucide-react';
 
 const REQUIRED_CARD_KEYS = ['id', 'front', 'back', 'category', 'masteryLevel', 'type'] as const;
 
@@ -60,12 +60,17 @@ const Modal: React.FC<ModalProps> = ({ open, title, message, confirmLabel = 'OK'
 };
 
 export const SettingsPage: React.FC = () => {
-  const { cards, t, language, setLanguage, theme, setTheme, exportData, importData: importToStore } = useMasteryStore();
+  const { cards, t, language, setLanguage, theme, setTheme, exportData, importData: importToStore, restoreTutorial } = useMasteryStore();
   const { isInstallable, install } = usePWAInstall();
   const [modal, setModal] = useState<Omit<ModalProps, 'onConfirm' | 'onCancel'> & { onConfirm: () => void } | null>(null);
 
   const showAlert = (title: string, message: string) => {
     setModal({ open: true, title, message, onConfirm: () => setModal(null) });
+  };
+
+  const handleRestoreTutorial = () => {
+    restoreTutorial();
+    showAlert('✓', language === 'pt' ? 'Cards de tutorial restaurados!' : 'Tutorial cards restored!');
   };
 
   const showConfirm = (title: string, message: string, onConfirm: () => void, variant: 'danger' | 'info' = 'danger') => {
@@ -202,6 +207,24 @@ export const SettingsPage: React.FC = () => {
               <input type="file" accept=".json" onChange={handleImport} className="hidden" />
             </label>
           </div>
+        </section>
+
+        {/* Onboarding */}
+        <section className="p-6 bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl shadow-sm">
+          <div className="flex items-center gap-3 mb-2">
+            <div className="w-8 h-8 bg-zinc-100 dark:bg-zinc-800 rounded-lg flex items-center justify-center text-zinc-900 dark:text-zinc-100">
+              <GraduationCap size={18} />
+            </div>
+            <h3 className="text-lg font-bold text-zinc-900 dark:text-zinc-100">{t.settings.onboarding}</h3>
+          </div>
+          <p className="text-sm text-zinc-500 mb-6 leading-relaxed">{t.settings.restoreTutorialDesc}</p>
+          <button 
+            onClick={handleRestoreTutorial}
+            className="w-full flex items-center justify-center gap-2 px-4 py-3 bg-zinc-50 dark:bg-zinc-800 text-zinc-900 dark:text-zinc-100 rounded-xl font-bold hover:bg-zinc-100 dark:hover:bg-zinc-700 transition-all border border-zinc-200 dark:border-zinc-700 text-xs uppercase tracking-widest"
+          >
+            <RotateCcw size={14} className="mr-1" />
+            {t.settings.restoreTutorial}
+          </button>
         </section>
 
         {/* Google Drive — Coming Soon */}
