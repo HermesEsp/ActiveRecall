@@ -46,7 +46,14 @@ export const StudyPage: React.FC = () => {
   const [pendingNext, setPendingNext] = useState<number | null>(null);
 
   const startReview = (category: string = 'All') => {
-    const studyCards = getStudyCards(category);
+    // Try to get due cards first
+    let studyCards = getStudyCards(category);
+    
+    // If no cards are due, include all cards for practice
+    if (studyCards.length === 0) {
+      studyCards = getStudyCards(category, true);
+    }
+
     if (studyCards.length > 0) {
       setSelectedCategory(category);
       startSession(studyCards, category);
@@ -164,7 +171,7 @@ export const StudyPage: React.FC = () => {
       </div>
 
       <div className="flex flex-col items-center gap-16">
-        <div className="w-full perspect-1000">
+        <div className="w-full perspective-1000">
            <Card card={currentCard} isFlipped={isFlipped} onFlip={() => pendingNext === null && setIsFlipped(!isFlipped)} onFlipComplete={() => {}} />
         </div>
 

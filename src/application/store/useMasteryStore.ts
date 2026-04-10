@@ -30,7 +30,7 @@ interface MasteryState {
   updateCard: (id: string, front: string, back: string, category: string, type?: FlashcardType) => void;
   deleteCard: (id: string) => void;
   updateMastery: (cardId: string, grade: ReviewGrade) => void;
-  getStudyCards: (category?: string) => Flashcard[];
+  getStudyCards: (category?: string, forceAll?: boolean) => Flashcard[];
   getCategories: () => string[];
   migrateAll: () => void;
   exportData: () => string;
@@ -116,19 +116,22 @@ export const useMasteryStore = create<MasteryState>()(
           };
         });
       },
-      getStudyCards: (category) => {
+      getStudyCards: (category, forceAll = false) => {
         const { cards } = get();
         const now = Date.now();
         
-        let dueCards = cards.filter(card => 
-          card.nextReviewAt === null || card.nextReviewAt <= now
-        );
-
-        if (category && category !== 'All') {
-          dueCards = dueCards.filter(card => card.category === category);
+        let filteredCards = cards;
+        if (!forceAll) {
+          filteredCards = cards.filter(card => 
+            card.nextReviewAt === null || card.nextReviewAt <= now
+          );
         }
 
-        return dueCards.sort((a, b) => (a.nextReviewAt || 0) - (b.nextReviewAt || 0));
+        if (category && category !== 'All') {
+          filteredCards = filteredCards.filter(card => card.category === category);
+        }
+
+        return filteredCards.sort((a, b) => (a.nextReviewAt || 0) - (b.nextReviewAt || 0));
       },
       getCategories: () => {
         const { cards } = get();
