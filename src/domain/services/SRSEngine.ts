@@ -1,7 +1,7 @@
 import { Flashcard } from '../entities/Flashcard';
 import { fsrs, Rating, createEmptyCard } from 'ts-fsrs';
 
-export type ReviewGrade = 0 | 3 | 5; // Forgot (0), Hard (3), Easy (5)
+export type ReviewGrade = 1 | 2 | 3 | 4; // 1: Again, 2: Hard, 3: Good, 4: Easy
 
 export interface SRSUpdate {
   fsrsCard: any;
@@ -24,11 +24,13 @@ export const SRSEngine = {
 
     // 2. Map Legacy ReviewGrade to FSRS Rating
     let rating = Rating.Good;
-    if (grade === 0) {
+    if (grade === 1) {
       rating = Rating.Again;
-    } else if (grade === 3) {
+    } else if (grade === 2) {
       rating = Rating.Hard;
-    } else if (grade === 5) {
+    } else if (grade === 3) {
+      rating = Rating.Good;
+    } else if (grade === 4) {
       rating = Rating.Easy;
     }
 

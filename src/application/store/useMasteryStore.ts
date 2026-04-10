@@ -6,6 +6,7 @@ import { StudyLog } from '../../domain/entities/StudyLog';
 import { SRSEngine, ReviewGrade } from '../../domain/services/SRSEngine';
 import { MigrationService } from '../../domain/services/MigrationService';
 import { translations, Language } from '../../translations';
+import { useUserStore } from './useUserStore';
 
 export { type ReviewGrade };
 
@@ -40,6 +41,7 @@ interface MasteryState {
   importCards: (jsonData: string) => boolean;
   exportDeck: (category: string) => string;
   exportCard: (id: string) => string;
+  resetAllData: (lang: Language) => void;
 }
 
 const getInitialLanguage = (): Language => {
@@ -169,7 +171,27 @@ export const useMasteryStore = create<MasteryState>()(
           const newHistory = [...state.studyHistory];
           const todayEntry = newHistory.find(h => h.date === todayStr);
           if (todayEntry) todayEntry.count += 1;
-          else newHistory.push({ date: todayStr, count: 1 });
+          else {
+            newHistory.push({ date: todayStr, count: 1 });
+            
+            // Streak Management
+            const userStore = useUserStore.getState();
+            if (state.lastStudyDate) {
+              const lastDate = new Date(state.lastStudyDate);
+              const todayDate = new Date(todayStr);
+              const diffTime = Math.abs(todayDate.getTime() - lastDate.getTime());
+              const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+              
+              if (diffDays === 1) {
+                userStore.incrementStreak();
+              } else if (diffDays > 1) {
+                userStore.resetStreak();
+                userStore.incrementStreak();
+              }
+            } else {
+              userStore.incrementStreak();
+            }
+          }
           if (newHistory.length > 30) newHistory.shift();
 
           const updatedCards = state.cards.map((card) => {
@@ -177,9 +199,10 @@ export const useMasteryStore = create<MasteryState>()(
             const srsUpdate = SRSEngine.calculateNextReview(card, grade);
             
             let newLevel = card.masteryLevel;
-            if (grade === 0) newLevel = 0;
+            if (grade === 1) newLevel = 0;
+            else if (grade === 2) newLevel = Math.max(1, card.masteryLevel) as MasteryLevel;
             else if (grade === 3) newLevel = Math.min(5, card.masteryLevel + 1) as MasteryLevel;
-            else if (grade === 5) newLevel = 5;
+            else if (grade === 4) newLevel = 5;
 
             return {
               ...card,

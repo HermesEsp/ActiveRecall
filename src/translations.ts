@@ -48,6 +48,7 @@ export const translations = {
       flip: 'Flipping Card...',
       forgot: 'Forgot',
       hard: 'Hard',
+      good: 'Good',
       easy: 'Easy',
       finished: 'Session Complete',
       finishedDesc: 'You reached the end of your cards for',
@@ -59,7 +60,9 @@ export const translations = {
       howItWorks: {
         title: 'Industrial Spaced Repetition',
         desc: 'Our system uses scientific algorithms to show you cards right before you forget them, maximizing long-term retention with minimal effort.'
-      }
+      },
+      practice: 'Practice',
+      practiceMode: 'Practice Mode'
     },
     library: {
       allCategories: 'All Categories',
@@ -128,7 +131,7 @@ export const translations = {
     },
     defaultCards: [
       { front: 'Welcome! How do you reveal the answer to this card?', back: 'Press **SPACE** on your keyboard or click anywhere on the card.', category: 'Tutorial', type: 'standard' },
-      { front: 'How do you rate your memory after revealing the answer?', back: 'Use keys **1** (Forgot), **2** (Hard), or **3** (Easy) to schedule the next review.', category: 'Tutorial', type: 'standard' },
+      { front: 'How do you rate your memory after revealing the answer?', back: 'Use keys **1** (Forgot), **2** (Hard), **3** (Good), or **4** (Easy) to schedule the next review.', category: 'Tutorial', type: 'standard' },
       { front: 'What are {{Cloze}} cards?', back: 'They are cards where specific parts are hidden. You can create them by wrapping text in `{{double braces}}`.', category: 'Tutorial', type: 'cloze' },
       { front: 'Where is your Knowledge Base stored?', back: 'Directly in your browser\'s LocalStorage. No servers, 100% private.', category: 'Tutorial', type: 'standard' }
     ]
@@ -180,6 +183,7 @@ export const translations = {
       flip: 'Virando Card...',
       forgot: 'Esqueci',
       hard: 'Difícil',
+      good: 'Bom',
       easy: 'Fácil',
       finished: 'Sessão Concluída',
       finishedDesc: 'Você chegou ao fim dos seus cards para',
@@ -191,7 +195,9 @@ export const translations = {
       howItWorks: {
         title: 'Repetição Espaçada Industrial',
         desc: 'Nosso sistema usa algoritmos científicos para mostrar os cards logo antes de você esquecê-los, maximizando a retenção com esforço mínimo.'
-      }
+      },
+      practice: 'Praticar',
+      practiceMode: 'Modo Prática'
     },
     library: {
       allCategories: 'Todas as Categorias',
@@ -260,7 +266,7 @@ export const translations = {
     },
     defaultCards: [
       { front: 'Bem-vindo! Como você revela a resposta deste card?', back: 'Pressione **ESPAÇO** no teclado ou clique em qualquer lugar do card.', category: 'Tutorial', type: 'standard' },
-      { front: 'Como você avalia sua memória após ver a resposta?', back: 'Use as teclas **1** (Esqueci), **2** (Difícil) ou **3** (Fácil) para agendar a próxima revisão.', category: 'Tutorial', type: 'standard' },
+      { front: 'Como você avalia sua memória após ver a resposta?', back: 'Use as teclas **1** (Esqueci), **2** (Difícil), **3** (Bom) ou **4** (Fácil) para agendar a próxima revisão.', category: 'Tutorial', type: 'standard' },
       { front: 'O que são cards de {{Lacuna}} (Cloze)?', back: 'São cards onde partes específicas ficam ocultas. Crie-os envolvendo o texto com `{{chaves duplas}}`.', category: 'Tutorial', type: 'cloze' },
       { front: 'Onde sua Base de Conhecimento fica guardada?', back: 'Diretamente no LocalStorage do seu navegador. Sem servidores, 100% privado.', category: 'Tutorial', type: 'standard' }
     ]

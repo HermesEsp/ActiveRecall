@@ -227,7 +227,7 @@ export const DashboardPage: React.FC = () => {
                <LayoutIcon className="text-zinc-400" size={20} />
                {t.dashboard.recent}
             </Label>
-            <button className="text-[10px] font-black uppercase tracking-widest text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-all border-b-2 border-transparent hover:border-zinc-900">
+            <button onClick={() => window.location.href = '/library'} className="text-[10px] font-black uppercase tracking-widest text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-all border-b-2 border-transparent hover:border-zinc-900">
                {t.dashboard.viewAll}
             </button>
           </div>

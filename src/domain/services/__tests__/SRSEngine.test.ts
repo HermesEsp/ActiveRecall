@@ -1,51 +1,23 @@
 import { describe, it, expect } from 'vitest';
 import { SRSEngine } from '../SRSEngine';
 import { Flashcard } from '../../entities/Flashcard';
+import { createEmptyCard } from 'ts-fsrs';
 
-describe('SRSEngine (SM-2 Algorithm)', () => {
+describe('SRSEngine (FSRS Algorithm)', () => {
   const mockCard: Partial<Flashcard> = {
-    repetitionCount: 0,
-    easeFactor: 2.5,
-    interval: 0,
+    fsrsCard: createEmptyCard(),
   };
 
-  it('initializes new cards correctly on success (grade 5)', () => {
-    const update = SRSEngine.calculateNextReview(mockCard, 5);
-    expect(update.repetitionCount).toBe(1);
-    expect(update.interval).toBe(1);
-    expect(update.easeFactor).toBe(2.6); // 2.5 + (0.1 - 0 * (0.08 + 0 * 0.02)) = 2.6
+  it('initializes new cards correctly on success (grade 4 = Easy)', () => {
+    const update = SRSEngine.calculateNextReview(mockCard, 4);
+    expect(update.fsrsCard).toBeDefined();
+    expect(update.fsrsCard.reps).toBe(1);
+    expect(update.fsrsCard.scheduled_days).toBeGreaterThan(0);
   });
 
-  it('increments repetition and calculates interval correctly for known cards', () => {
-    const card: Partial<Flashcard> = {
-      repetitionCount: 2,
-      easeFactor: 2.5,
-      interval: 6,
-    };
-    const update = SRSEngine.calculateNextReview(card, 5);
-    expect(update.repetitionCount).toBe(3);
-    expect(update.interval).toBe(15); // Math.round(6 * 2.5)
-  });
-
-  it('resets repetition and applies penalty on failure (grade 0)', () => {
-    const card: Partial<Flashcard> = {
-      repetitionCount: 5,
-      easeFactor: 2.5,
-      interval: 50,
-    };
-    const update = SRSEngine.calculateNextReview(card, 0);
-    expect(update.repetitionCount).toBe(0);
-    expect(update.interval).toBe(1);
-    expect(update.easeFactor).toBe(2.3); // 2.5 - 0.2
-  });
-
-  it('caps easeFactor at minimum 1.3', () => {
-    const card: Partial<Flashcard> = {
-      repetitionCount: 1,
-      easeFactor: 1.4,
-      interval: 1,
-    };
-    const update = SRSEngine.calculateNextReview(card, 0);
-    expect(update.easeFactor).toBe(1.3);
+  it('handles penalty / reset correctly on failure (grade 1 = Forgot)', () => {
+    const update = SRSEngine.calculateNextReview(mockCard, 1);
+    expect(update.fsrsCard.reps).toBe(0); // For learning state, it might stay 0 or go back to learning
+    expect(update.fsrsCard.scheduled_days).toBe(0);
   });
 });

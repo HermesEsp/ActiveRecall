@@ -63,16 +63,16 @@ describe('useMasteryStore', () => {
     it('increases mastery level on success', () => {
       useMasteryStore.getState().addCard('Q', 'A', 'Test');
       const id = useMasteryStore.getState().cards[0].id;
-      useMasteryStore.getState().updateMastery(id, 5);
+      useMasteryStore.getState().updateMastery(id, 4);
       expect(useMasteryStore.getState().cards[0].masteryLevel).toBe(5);
     });
 
     it('resets mastery to 0 on failure', () => {
       useMasteryStore.getState().addCard('Q', 'A', 'Test');
       const id = useMasteryStore.getState().cards[0].id;
-      useMasteryStore.getState().updateMastery(id, 5);
+      useMasteryStore.getState().updateMastery(id, 4);
       expect(useMasteryStore.getState().cards[0].masteryLevel).toBe(5);
-      useMasteryStore.getState().updateMastery(id, 0);
+      useMasteryStore.getState().updateMastery(id, 1);
       expect(useMasteryStore.getState().cards[0].masteryLevel).toBe(0);
     });
   });

@@ -82,13 +82,16 @@ export const StudyPage: React.FC = () => {
       }
     },
     '1': () => {
-      if (isActive && isFlipped && !isFinished()) handleNext(0);
+      if (isActive && isFlipped && !isFinished()) handleNext(1);
     },
     '2': () => {
-      if (isActive && isFlipped && !isFinished()) handleNext(3);
+      if (isActive && isFlipped && !isFinished()) handleNext(2);
     },
     '3': () => {
-      if (isActive && isFlipped && !isFinished()) handleNext(5);
+      if (isActive && isFlipped && !isFinished()) handleNext(3);
+    },
+    '4': () => {
+      if (isActive && isFlipped && !isFinished()) handleNext(4);
     },
     'Escape': () => {
       if (isActive) endSession();
@@ -129,7 +132,7 @@ export const StudyPage: React.FC = () => {
                 className="p-10 border-2 border-zinc-100 dark:border-zinc-800 rounded-xl bg-white dark:bg-zinc-900 hover:border-zinc-900 dark:hover:border-zinc-100 hover:shadow-2xl transition-all text-left group relative overflow-hidden"
               >
                 <div className="relative z-10">
-                  <div className="flex justify-between items-start mb-10"><div className="w-12 h-12 bg-zinc-50 dark:bg-zinc-800 rounded-xl flex items-center justify-center group-hover:bg-zinc-900 dark:group-hover:bg-white group-hover:text-white dark:group-hover:text-zinc-900 transition-all shadow-inner"><BookOpen size={24} /></div>{cardsDue > 0 ? <span className="bg-red-500 text-white text-[9px] font-black tracking-widest px-3 py-1.5 rounded-lg shadow-lg shadow-red-500/30">{cardsDue} {t.study.due}</span> : <span className="bg-zinc-100 dark:bg-zinc-800 text-zinc-400 text-[9px] font-black tracking-widest px-3 py-1.5 rounded-lg border border-zinc-200 dark:border-zinc-700">Practice</span>}</div>
+                  <div className="flex justify-between items-start mb-10"><div className="w-12 h-12 bg-zinc-50 dark:bg-zinc-800 rounded-xl flex items-center justify-center group-hover:bg-zinc-900 dark:group-hover:bg-white group-hover:text-white dark:group-hover:text-zinc-900 transition-all shadow-inner"><BookOpen size={24} /></div>{cardsDue > 0 ? <span className="bg-red-500 text-white text-[9px] font-black tracking-widest px-3 py-1.5 rounded-lg shadow-lg shadow-red-500/30">{cardsDue} {t.study.due}</span> : <span className="bg-zinc-100 dark:bg-zinc-800 text-zinc-400 text-[9px] font-black tracking-widest px-3 py-1.5 rounded-lg border border-zinc-200 dark:border-zinc-700">{t.study.practice}</span>}</div>
                   <h3 className="text-2xl font-black text-zinc-900 dark:text-zinc-100 mb-2 tracking-tight">{cat}</h3>
                   <div className="flex items-center gap-2 text-zinc-400 group-hover:text-zinc-900 dark:group-hover:text-zinc-100 transition-colors"><span className="text-[10px] font-bold uppercase tracking-[0.2em]">{t.study.start}</span><Play size={12} fill="currentColor" /></div>
                 </div>
@@ -179,7 +182,7 @@ export const StudyPage: React.FC = () => {
             <div className="flex items-center gap-2">
               <span className="text-[10px] font-black uppercase tracking-[0.3em] text-zinc-400">{selectedCategory}</span>
               {useStudySessionStore.getState().isPractice && (
-                <span className="text-[8px] font-black uppercase tracking-widest bg-zinc-100 dark:bg-zinc-800 text-zinc-500 px-2 py-0.5 rounded border border-zinc-200 dark:border-zinc-700">Practice Mode</span>
+                <span className="text-[8px] font-black uppercase tracking-widest bg-zinc-100 dark:bg-zinc-800 text-zinc-500 px-2 py-0.5 rounded border border-zinc-200 dark:border-zinc-700">{t.study.practiceMode}</span>
               )}
             </div>
             <h4 className="text-lg font-black tracking-tight leading-none pt-1">
@@ -207,23 +210,29 @@ export const StudyPage: React.FC = () => {
                </div>
             </motion.div>
           ) : (
-            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="flex gap-4 md:gap-6 w-full max-w-xl mx-auto">
-              <button onClick={() => handleNext(0)} className="flex-1 group flex flex-col items-center justify-center py-6 bg-white dark:bg-zinc-900 border-2 border-zinc-100 dark:border-zinc-800 rounded-xl hover:border-red-500 hover:shadow-2xl hover:shadow-red-500/20 transition-all relative">
+            <motion.div initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }} className="flex gap-3 md:gap-4 w-full max-w-2xl mx-auto">
+              <button onClick={() => handleNext(1)} className="flex-1 group flex flex-col items-center justify-center py-6 bg-white dark:bg-zinc-900 border-2 border-zinc-100 dark:border-zinc-800 rounded-xl hover:border-red-500 hover:shadow-2xl hover:shadow-red-500/20 transition-all relative">
                 <X size={24} className="text-zinc-300 group-hover:text-red-500 transition-colors mb-4" />
                 <span className="text-[10px] font-black uppercase tracking-widest group-hover:text-red-600 mb-4">{t.study.forgot}</span>
                 <Kbd className="bg-zinc-50 dark:bg-zinc-800 text-zinc-400 border-zinc-200 dark:border-zinc-700">1</Kbd>
               </button>
               
-              <button onClick={() => handleNext(3)} className="flex-1 group flex flex-col items-center justify-center py-6 bg-white dark:bg-zinc-900 border-2 border-zinc-100 dark:border-zinc-800 rounded-xl hover:border-zinc-900 dark:hover:border-white hover:shadow-2xl transition-all relative">
-                <RotateCcw size={24} className="text-zinc-300 group-hover:text-zinc-900 dark:group-hover:text-white transition-colors mb-4" />
+              <button onClick={() => handleNext(2)} className="flex-1 group flex flex-col items-center justify-center py-6 bg-white dark:bg-zinc-900 border-2 border-zinc-100 dark:border-zinc-800 rounded-xl hover:border-orange-500 dark:hover:border-orange-500 hover:shadow-2xl transition-all relative">
+                <RotateCcw size={24} className="text-zinc-300 group-hover:text-orange-500 transition-colors mb-4" />
                 <span className="text-[10px] font-black uppercase tracking-widest mb-4">{t.study.hard}</span>
                 <Kbd className="bg-zinc-50 dark:bg-zinc-800 text-zinc-400 border-zinc-200 dark:border-zinc-700">2</Kbd>
               </button>
 
-              <button onClick={() => handleNext(5)} className="flex-1 group flex flex-col items-center justify-center py-6 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 rounded-xl shadow-2xl shadow-zinc-900/40 hover:scale-[1.05] transition-all relative overflow-hidden">
-                <Check size={24} strokeWidth={4} className="mb-4" />
+              <button onClick={() => handleNext(3)} className="flex-1 group flex flex-col items-center justify-center py-6 bg-white dark:bg-zinc-900 border-2 border-zinc-100 dark:border-zinc-800 rounded-xl hover:border-emerald-500 dark:hover:border-emerald-500 hover:shadow-2xl transition-all relative">
+                <Check size={24} className="text-zinc-300 group-hover:text-emerald-500 transition-colors mb-4" />
+                <span className="text-[10px] font-black uppercase tracking-widest mb-4">{t.study.good}</span>
+                <Kbd className="bg-zinc-50 dark:bg-zinc-800 text-zinc-400 border-zinc-200 dark:border-zinc-700">3</Kbd>
+              </button>
+
+              <button onClick={() => handleNext(4)} className="flex-1 group flex flex-col items-center justify-center py-6 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 rounded-xl shadow-2xl shadow-zinc-900/40 hover:scale-[1.05] transition-all relative overflow-hidden">
+                <Target size={24} strokeWidth={4} className="mb-4" />
                 <span className="text-[10px] font-black uppercase tracking-widest mb-4">{t.study.easy}</span>
-                <Kbd className="bg-white/20 dark:bg-zinc-900/20 text-white dark:text-zinc-900 border-white/20 dark:border-zinc-900/20">3</Kbd>
+                <Kbd className="bg-white/20 dark:bg-zinc-900/20 text-white dark:text-zinc-900 border-white/20 dark:border-zinc-900/20">4</Kbd>
               </button>
             </motion.div>
           )}
