@@ -188,12 +188,12 @@ export const LibraryPage: React.FC = () => {
 
       {/* Turbo Capture Area */}
       <div className="mb-16">
-        <div className="bg-zinc-100 dark:bg-zinc-900/50 p-1 md:p-1.5 rounded-[32px] border-2 border-dashed border-zinc-200 dark:border-zinc-800 focus-within:border-zinc-900 dark:focus-within:border-zinc-500 transition-all">
-          <div className="bg-white dark:bg-zinc-900 rounded-[26px] p-5 md:p-8 shadow-sm">
+        <div className="bg-zinc-100 dark:bg-zinc-900/50 p-1 md:p-1.5 rounded-3xl border-2 border-dashed border-zinc-200 dark:border-zinc-800 focus-within:border-zinc-900 dark:focus-within:border-zinc-500 transition-all">
+          <div className="bg-white dark:bg-zinc-900 rounded-[22px] p-6 md:p-8 shadow-sm">
             <div className="flex flex-col gap-6">
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between px-1">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div className="space-y-3">
+                  <div className="h-10 flex items-center justify-between px-1">
                     <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">{t.library.cardFront}</label>
                     <div className="flex items-center gap-1">
                       <button type="button" onClick={() => wrapSelection('**', '**')} className="p-1.5 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-lg transition-colors text-zinc-500" title={`${t.library.bold} (Cmd+B)`}><Bold size={14} /></button>
@@ -217,24 +217,22 @@ export const LibraryPage: React.FC = () => {
                     onChange={(e) => setFront(e.target.value)}
                     onKeyDown={handleFrontKeyDown}
                     placeholder={t.library.frontPlaceholder}
-                    className="w-full bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl p-4 md:p-6 text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-zinc-900 dark:focus:ring-white transition-all outline-none resize-none min-h-[140px] text-lg font-medium leading-relaxed"
+                    className="w-full bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-5 text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-zinc-900 dark:focus:ring-white transition-all outline-none resize-none min-h-[140px] text-lg font-medium leading-relaxed"
                   />
                 </div>
 
-                <div className="space-y-2">
-                  <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-400 px-1">{t.library.cardBack}</label>
+                <div className="space-y-3">
+                  <div className="h-10 flex items-center px-1">
+                    <label className="text-[10px] font-bold uppercase tracking-widest text-zinc-400">{t.library.cardBack}</label>
+                  </div>
                   <textarea
                     ref={backRef}
                     value={back}
                     onChange={(e) => setBack(e.target.value)}
                     onKeyDown={(e) => { if (e.key === 'Enter' && !e.shiftKey) { e.preventDefault(); handleCapture(); } }}
                     placeholder={t.library.backPlaceholder}
-                    className="w-full bg-white dark:bg-zinc-800 border border-zinc-200 dark:border-zinc-700 rounded-xl p-4 md:p-5 text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-zinc-900 dark:focus:ring-white transition-all outline-none resize-none min-h-[120px] text-base leading-relaxed"
+                    className="w-full bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-5 text-zinc-900 dark:text-zinc-100 focus:ring-2 focus:ring-zinc-900 dark:focus:ring-white transition-all outline-none resize-none min-h-[140px] text-base leading-relaxed"
                   />
-                  <p className="hidden md:flex text-[10px] text-zinc-400 font-medium px-1 items-center gap-1.5 italic">
-                    <Info size={10} />
-                    {t.library.proTip.replace('{key}', 'Enter')}
-                  </p>
                 </div>
               </div>
 
@@ -243,13 +241,13 @@ export const LibraryPage: React.FC = () => {
                   type="text" 
                   value={captureCategory} 
                   onChange={(e) => setCaptureCategory(e.target.value)}
-                  className="w-full md:w-48 bg-zinc-50 dark:bg-zinc-800 px-4 py-2 rounded-xl text-xs font-bold focus:ring-2 focus:ring-zinc-900/10 outline-none" 
+                  className="w-full md:w-48 bg-zinc-50 dark:bg-zinc-800 px-4 py-2.5 rounded-xl text-xs font-bold focus:ring-2 focus:ring-zinc-900/10 outline-none border border-zinc-200 dark:border-zinc-800" 
                   placeholder={t.library.categoryLabel}
                 />
                 <button
                   onClick={handleCapture}
                   disabled={!front || !back}
-                  className="w-full md:flex-grow bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 py-4 px-8 rounded-2xl font-black text-sm uppercase tracking-[0.1em] hover:scale-[1.02] transition-all disabled:opacity-20 shadow-xl flex items-center justify-center gap-3"
+                  className="w-full md:flex-grow bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 py-4 px-8 rounded-2xl font-black text-sm uppercase tracking-[0.1em] hover:scale-[1.01] transition-all disabled:opacity-20 shadow-xl flex items-center justify-center gap-3"
                 >
                   <Plus size={18} strokeWidth={3} />
                   {editingCard ? t.library.update : t.library.createButton}
@@ -292,7 +290,7 @@ export const LibraryPage: React.FC = () => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {categoryCards.map((card) => (
-                <div key={card.id} className="group bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-3xl p-6 hover:shadow-2xl transition-all flex flex-col min-h-[220px]">
+                <div key={card.id} className="group bg-white dark:bg-zinc-900 border border-zinc-200 dark:border-zinc-800 rounded-2xl p-6 hover:shadow-xl transition-all flex flex-col min-h-[220px]">
                   <div className="flex justify-between items-start mb-4">
                     <span className="text-[10px] font-black uppercase tracking-[0.2em] px-2.5 py-1 bg-zinc-50 dark:bg-zinc-800 text-zinc-400 rounded-md">
                       {card.category}
@@ -320,6 +318,19 @@ export const LibraryPage: React.FC = () => {
             <p className="text-zinc-400">{t.library.noCards}</p>
           </div>
         )}
+
+        {/* Methodology Tip - REFINED */}
+        <div className="mt-20 p-6 md:p-8 bg-zinc-100 dark:bg-zinc-900/40 rounded-2xl border border-zinc-200 dark:border-zinc-800 flex flex-col md:flex-row gap-5 items-start">
+          <div className="w-10 h-10 bg-white dark:bg-zinc-800 rounded-xl flex items-center justify-center text-zinc-500 shrink-0">
+            <Info size={20} />
+          </div>
+          <div className="space-y-1">
+            <h4 className="text-sm font-black uppercase tracking-widest text-zinc-900 dark:text-zinc-100">{t.study.howItWorks.title}</h4>
+            <p className="text-sm text-zinc-500 dark:text-zinc-400 leading-relaxed font-medium">
+              {t.study.howItWorks.desc}
+            </p>
+          </div>
+        </div>
       </div>
 
       {/* Quick View Modal */}
@@ -327,7 +338,7 @@ export const LibraryPage: React.FC = () => {
         {viewingCard && (
           <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
             <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onClick={() => setViewingCard(null)} className="absolute inset-0 bg-zinc-900/60 backdrop-blur-sm" />
-            <motion.div initial={{ opacity: 0, scale: 0.9, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.9, y: 20 }} className="relative w-full max-w-lg bg-zinc-50 dark:bg-zinc-900 rounded-[40px] p-8 md:p-12 shadow-2xl">
+            <motion.div initial={{ opacity: 0, scale: 0.9, y: 20 }} animate={{ opacity: 1, scale: 1, y: 0 }} exit={{ opacity: 0, scale: 0.9, y: 20 }} className="relative w-full max-w-lg bg-zinc-50 dark:bg-zinc-900 rounded-3xl p-8 md:p-12 shadow-2xl">
               <button onClick={() => setViewingCard(null)} className="absolute top-6 right-6 p-2 text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100" title={t.library.cancel}><X size={24} /></button>
               <div className="flex flex-col items-center gap-8 text-center">
                  <div className="space-y-1">
