@@ -1,3 +1,5 @@
+import { Card as FSRSCard } from 'ts-fsrs';
+
 export type MasteryLevel = 0 | 1 | 2 | 3 | 4 | 5;
 
 export type FlashcardType = 'standard' | 'cloze';
@@ -17,4 +19,7 @@ export interface Flashcard {
   easeFactor?: number;
   interval?: number;
   srsVersion?: number;
+
+  // New FSRS Metadata
+  fsrsCard?: FSRSCard;
 }

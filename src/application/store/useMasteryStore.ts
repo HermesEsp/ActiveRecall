@@ -1,5 +1,6 @@
 import { create } from 'zustand';
-import { persist } from 'zustand/middleware';
+import { persist, createJSONStorage, StateStorage } from 'zustand/middleware';
+import { openDB } from 'idb';
 import { Flashcard, MasteryLevel, FlashcardType } from '../../domain/entities/Flashcard';
 import { StudyLog } from '../../domain/entities/StudyLog';
 import { SRSEngine, ReviewGrade } from '../../domain/services/SRSEngine';
@@ -45,6 +46,80 @@ const getInitialLanguage = (): Language => {
   if (typeof navigator === 'undefined') return 'en';
   const systemLang = navigator.language.split('-')[0];
   return (systemLang === 'pt' ? 'pt' : 'en') as Language;
+};
+
+// Domain Separated IndexedDB implementation
+const dbPromise = typeof window !== 'undefined' ? openDB('ActiveRecallSystem', 1, {
+  upgrade(db) {
+    if (!db.objectStoreNames.contains('cards')) {
+      db.createObjectStore('cards', { keyPath: 'id' });
+    }
+    if (!db.objectStoreNames.contains('logs')) {
+      // For studyHistory items
+      db.createObjectStore('logs', { keyPath: 'date' });
+    }
+    if (!db.objectStoreNames.contains('metadata')) {
+      db.createObjectStore('metadata');
+    }
+  },
+}) : null;
+
+const idbStorage: StateStorage = {
+  getItem: async (name: string): Promise<string | null> => {
+    if (!dbPromise) return null;
+    const db = await dbPromise;
+    const cards = await db.getAll('cards');
+    const logs = await db.getAll('logs');
+    const meta = await db.get('metadata', name);
+    
+    if (cards.length === 0 && !meta) return null;
+    
+    // Transparently bundle the relational tables back to Zustand state
+    return JSON.stringify({
+      state: {
+         cards,
+         studyHistory: logs,
+         lastStudyDate: meta?.lastStudyDate || null,
+      },
+      version: meta?.version || 0
+    });
+  },
+  setItem: async (name: string, value: string): Promise<void> => {
+    if (!dbPromise) return;
+    const data = JSON.parse(value);
+    const { state, version } = data;
+    const db = await dbPromise;
+    
+    const tx = db.transaction(['cards', 'logs', 'metadata'], 'readwrite');
+    
+    // We rewrite for exact sync, but IDB is fast enough for localized data sets.
+    await tx.objectStore('cards').clear();
+    for (const card of state.cards) {
+       await tx.objectStore('cards').put(card);
+    }
+    
+    await tx.objectStore('logs').clear();
+    for (const log of state.studyHistory) {
+      // Store logs organically using date as PK based on existing data
+      await tx.objectStore('logs').put(log);
+    }
+
+    await tx.objectStore('metadata').put({
+      lastStudyDate: state.lastStudyDate,
+      version
+    }, name);
+
+    await tx.done;
+  },
+  removeItem: async (name: string): Promise<void> => {
+    if (!dbPromise) return;
+    const db = await dbPromise;
+    const tx = db.transaction(['cards', 'logs', 'metadata'], 'readwrite');
+    await tx.objectStore('cards').clear();
+    await tx.objectStore('logs').clear();
+    await tx.objectStore('metadata').delete(name);
+    await tx.done;
+  },
 };
 
 export const useMasteryStore = create<MasteryState>()(
@@ -227,8 +302,9 @@ export const useMasteryStore = create<MasteryState>()(
     }),
     {
       name: 'flashcard-mastery-storage',
+      storage: createJSONStorage(() => idbStorage),
       onRehydrateStorage: () => (state) => {
-        if (state && state.cards.some(c => !c.srsVersion)) {
+        if (state && state.cards.some(c => !c.fsrsCard && (!c.srsVersion || c.srsVersion < 2))) {
           state.cards = MigrationService.migrateAll(state.cards);
         }
       }
