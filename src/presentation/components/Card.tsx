@@ -10,11 +10,26 @@ interface CardProps {
 }
 
 export const Card: React.FC<CardProps> = ({ card, isFlipped, onFlip, onFlipComplete }) => {
+  const renderText = (text: string) => {
+    // Basic Markdown support (Bold and Italic)
+    const parts = text.split(/(\*\*.*?\*\*|\*.*?\*)/);
+    return parts.map((part, i) => {
+      if (part.startsWith('**') && part.endsWith('**')) {
+        return <strong key={i} className="font-extrabold text-zinc-900 dark:text-white">{part.slice(2, -2)}</strong>;
+      }
+      if (part.startsWith('*') && part.endsWith('*')) {
+        return <em key={i} className="italic opacity-90">{part.slice(1, -1)}</em>;
+      }
+      return part;
+    });
+  };
+
   const renderFront = () => {
     if (card.type === 'cloze') {
-      return card.front.replace(/\{\{(.*?)\}\}/g, '[ ... ]');
+      const text = card.front.replace(/\{\{(.*?)\}\}/g, '[ ... ]');
+      return renderText(text);
     }
-    return card.front;
+    return renderText(card.front);
   };
 
   const renderBack = () => {
@@ -26,18 +41,18 @@ export const Card: React.FC<CardProps> = ({ card, isFlipped, onFlip, onFlipCompl
             if (part.startsWith('{{') && part.endsWith('}}')) {
               return (
                 <span key={i} className="bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 px-1.5 py-0.5 rounded mx-0.5 font-bold">
-                  {part.slice(2, -2)}
+                  {renderText(part.slice(2, -2))}
                 </span>
               );
             }
-            return part;
+            return renderText(part);
           })}
         </p>
       );
     }
     return (
       <p className="text-base md:text-lg text-zinc-700 dark:text-zinc-300 leading-relaxed px-4">
-        {card.back}
+        {renderText(card.back)}
       </p>
     );
   };

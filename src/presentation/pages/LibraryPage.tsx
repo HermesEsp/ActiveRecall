@@ -1,7 +1,11 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Plus, Trash2, Search, Edit2, X, ChevronDown, Filter } from 'lucide-react';
+import { 
+  Plus, Search, Edit2, Trash2, CheckCircle2, 
+  Trash, ChevronRight, Filter, Eye, X, ChevronDown 
+} from 'lucide-react';
 import { useMasteryStore } from '../../application/store/useMasteryStore';
+import { Card } from '../components/Card';
 import { cn } from '../../lib/utils';
 import { Flashcard, FlashcardType } from '../../domain/entities/Flashcard';
 
@@ -57,14 +61,16 @@ const CategoryFilter: React.FC<{
 };
 
 export const LibraryPage: React.FC = () => {
-  const { cards, addCard, updateCard, deleteCard, getCategories, t } = useMasteryStore();
+  const { cards, addCard, deleteCard, updateCard, getCategories, t } = useMasteryStore();
   const [front, setFront] = useState('');
   const [back, setBack] = useState('');
-  const [search, setSearch] = useState('');
+  const [captureCategory, setCaptureCategory] = useState('General');
   const [selectedCategory, setSelectedCategory] = useState('All');
-  const [captureCategory, setCaptureCategory] = useState('');
-  const [lastCreated, setLastCreated] = useState<string | null>(null);
+  const [search, setSearch] = useState('');
   const [editingCard, setEditingCard] = useState<Flashcard | null>(null);
+  const [viewingCard, setViewingCard] = useState<Flashcard | null>(null);
+  const [isFlipped, setIsFlipped] = useState(false);
+  const [lastCreated, setLastCreated] = useState<string | null>(null);
 
   const backRef = useRef<HTMLTextAreaElement>(null);
   const frontRef = useRef<HTMLTextAreaElement>(null);
@@ -152,6 +158,11 @@ export const LibraryPage: React.FC = () => {
       e.preventDefault();
       handleCapture();
     }
+  };
+
+  const startView = (card: Flashcard) => {
+    setViewingCard(card);
+    setIsFlipped(false);
   };
 
   const categories = getCategories();
@@ -310,6 +321,13 @@ export const LibraryPage: React.FC = () => {
                     <div className="flex items-center gap-4">
                       <div className="flex gap-1 md:opacity-0 group-hover:opacity-100 transition-opacity">
                         <button 
+                          onClick={() => startView(card)}
+                          className="p-2 text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
+                          title="View Card"
+                        >
+                          <Eye size={18} />
+                        </button>
+                        <button 
                           onClick={() => startEdit(card)}
                           className="p-2 text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
                         >
@@ -343,6 +361,53 @@ export const LibraryPage: React.FC = () => {
           <p className="text-zinc-400">{t.library.noCards}</p>
         </div>
       )}
+
+      {/* Quick View Modal */}
+      <AnimatePresence>
+        {viewingCard && (
+          <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
+            <motion.div 
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              onClick={() => setViewingCard(null)}
+              className="absolute inset-0 bg-zinc-900/60 backdrop-blur-sm"
+            />
+            <motion.div 
+              initial={{ opacity: 0, scale: 0.9, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              exit={{ opacity: 0, scale: 0.9, y: 20 }}
+              className="relative w-full max-w-lg bg-zinc-50 dark:bg-zinc-900 rounded-[40px] p-8 md:p-12 shadow-2xl overflow-hidden"
+            >
+              <button 
+                onClick={() => setViewingCard(null)}
+                className="absolute top-6 right-6 p-2 text-zinc-400 hover:text-zinc-900 dark:hover:text-zinc-100 transition-colors"
+              >
+                <X size={24} />
+              </button>
+
+              <div className="flex flex-col items-center gap-8">
+                 <div className="text-center space-y-2">
+                   <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-zinc-400">Quick Preview</h3>
+                   <p className="text-sm font-bold text-emerald-500">{viewingCard.category}</p>
+                 </div>
+
+                 <div className="w-full">
+                   <Card 
+                     card={viewingCard} 
+                     isFlipped={isFlipped} 
+                     onFlip={() => setIsFlipped(!isFlipped)} 
+                   />
+                 </div>
+
+                 <p className="text-[10px] font-black uppercase tracking-widest text-zinc-400">
+                    Tap the card to flip
+                 </p>
+              </div>
+            </motion.div>
+          </div>
+        )}
+      </AnimatePresence>
     </div>
   );
 };

@@ -11,7 +11,7 @@ export const translations = {
         front: 'To create an automatic blank (Cloze), you should wrap the main word in **{{double curly braces}}**.',
         back: 'The system will hide that word on the front of the card and reveal it on the back!',
         category: 'Tutorial',
-        type: 'cloze',
+        type: 'standard',
       },
       {
         front: 'How should you choose between the **Forgot / Hard / Easy** buttons?',
@@ -149,7 +149,7 @@ export const translations = {
         front: 'Para criar uma lacuna automática (Cloze), você deve envolver a palavra principal entre **{{duplas chaves}}**.',
         back: 'O sistema esconderá essa palavra na frente do card e a revelará no verso!',
         category: 'Tutorial',
-        type: 'cloze',
+        type: 'standard',
       },
       {
         front: 'Como você deve escolher entre os botões **Esqueci / Difícil / Fácil**?',
