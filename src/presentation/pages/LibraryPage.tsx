@@ -23,7 +23,17 @@ const Kbd = ({ children }: { children: React.ReactNode }) => (
 
 const CategoryFilter = ({ categories, selected, onSelect, t }: any) => (
   <div className="flex gap-2 overflow-x-auto pb-4 scrollbar-hide">
-    {['All', ...categories].map((cat) => (
+    <button
+      onClick={() => onSelect('All')}
+      className={`px-5 py-2.5 rounded-lg text-[10px] font-black uppercase tracking-[0.2em] transition-all whitespace-nowrap border ${
+        selected === 'All' 
+          ? 'bg-zinc-900 border-zinc-900 text-white shadow-xl dark:bg-white dark:border-white dark:text-zinc-900' 
+          : 'bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800 text-zinc-400 hover:border-zinc-900 dark:hover:border-zinc-100'
+      }`}
+    >
+      {t.library.allCategories}
+    </button>
+    {categories.map((cat: string) => (
       <button
         key={cat}
         onClick={() => onSelect(cat)}
@@ -33,10 +43,37 @@ const CategoryFilter = ({ categories, selected, onSelect, t }: any) => (
             : 'bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800 text-zinc-400 hover:border-zinc-900 dark:hover:border-zinc-100'
         }`}
       >
-        {cat === 'All' ? t.library.allCategories : cat}
+        {cat}
       </button>
     ))}
   </div>
+);
+
+const DeckCard = ({ category, count, onClick }: { category: string; count: number; onClick: () => void }) => (
+  <button 
+    onClick={onClick}
+    className="group relative bg-white dark:bg-zinc-900 rounded-xl border-2 border-zinc-100 dark:border-zinc-800 p-10 text-left hover:border-zinc-900 dark:hover:border-zinc-100 transition-all hover:shadow-2xl overflow-hidden"
+  >
+    {/* Stack Effect */}
+    <div className="absolute top-0 left-0 w-full h-1 bg-zinc-200 dark:bg-zinc-800 translate-y-[-100%] group-hover:translate-y-0 transition-transform" />
+    <div className="absolute top-0 left-0 w-full h-2 bg-zinc-100 dark:bg-zinc-800/50 translate-y-[-100%] group-hover:translate-y-[-50%] transition-transform delay-75" />
+    
+    <div className="relative z-10">
+      <div className="w-14 h-14 bg-zinc-50 dark:bg-zinc-800 rounded-xl flex items-center justify-center mb-8 border border-zinc-100 dark:border-zinc-700 group-hover:bg-zinc-900 dark:group-hover:bg-white group-hover:text-white dark:group-hover:text-zinc-900 transition-all shadow-inner">
+        <Layers size={28} />
+      </div>
+      <h3 className="text-3xl font-black text-zinc-900 dark:text-zinc-100 mb-2 tracking-tight line-clamp-1">{category}</h3>
+      <div className="flex items-center gap-3">
+        <span className="text-[10px] font-black uppercase tracking-widest text-zinc-400">{count} cards</span>
+        <div className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
+      </div>
+    </div>
+
+    {/* Decorative Icon */}
+    <div className="absolute right-0 bottom-0 opacity-[0.03] dark:opacity-[0.05] group-hover:opacity-[0.08] transition-opacity translate-x-1/4 translate-y-1/4">
+      <Layers size={180} />
+    </div>
+  </button>
 );
 
 export const LibraryPage: React.FC = () => {
@@ -255,37 +292,60 @@ export const LibraryPage: React.FC = () => {
         </div>
 
         <div className="space-y-24">
-          {Object.entries(groupedCards).map(([category, categoryCards]: any) => (
-            <div key={category}>
-              <GroupDivider label={category} count={categoryCards.length} />
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
-                {categoryCards.map((card: any) => (
-                  <div key={card.id} className="bg-white dark:bg-zinc-900 border border-zinc-200/60 dark:border-zinc-800/60 rounded-xl p-8 hover:border-zinc-900 dark:hover:border-zinc-100 transition-all hover:shadow-2xl flex flex-col min-h-[280px] group relative">
-                    <div className="flex justify-between items-start mb-8">
-                      <span className="text-[9px] font-black uppercase tracking-[0.2em] px-3 py-1.5 bg-zinc-50 dark:bg-zinc-800 text-zinc-400 rounded-lg group-hover:bg-zinc-900 group-hover:text-white transition-colors">{card.category}</span>
-                      <div className="flex items-center gap-1 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity">
-                        <Button variant="ghost" size="sm" onClick={() => { setViewingCard(card); setIsFlipped(false); }} className="p-2" aria-label={t.library.quickPreview}>
-                          <Eye size={18} />
-                        </Button>
-                        <Button variant="ghost" size="sm" onClick={() => startEdit(card)} className="p-2" aria-label={t.library.update}>
-                          <Edit2 size={18} />
-                        </Button>
-                        <Button variant="ghost" size="sm" onClick={() => deleteCard(card.id)} className="p-2 hover:text-red-500" aria-label={t.common.delete}>
-                          <Trash2 size={18} />
-                        </Button>
+          {(selectedCategory === 'All' && !search) ? (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 pb-20">
+              {Object.entries(groupedCards).map(([category, categoryCards]: any) => (
+                <DeckCard 
+                  key={category} 
+                  category={category} 
+                  count={categoryCards.length} 
+                  onClick={() => setSelectedCategory(category)} 
+                />
+              ))}
+            </div>
+          ) : (
+            Object.entries(groupedCards).map(([category, categoryCards]: any) => (
+              <div key={category} className="animate-in fade-in slide-in-from-bottom-4 duration-500">
+                <div className="flex items-center justify-between mb-8 group">
+                   <GroupDivider label={category} count={categoryCards.length} />
+                   {selectedCategory !== 'All' && (
+                     <button 
+                       onClick={() => setSelectedCategory('All')}
+                       className="text-[10px] font-black uppercase tracking-widest text-zinc-400 hover:text-zinc-950 dark:hover:text-white transition-colors"
+                     >
+                       ← {t.study.back}
+                     </button>
+                   )}
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+                  {categoryCards.map((card: any) => (
+                    <div key={card.id} className="bg-white dark:bg-zinc-900 border border-zinc-200/60 dark:border-zinc-800/60 rounded-xl p-8 hover:border-zinc-900 dark:hover:border-zinc-100 transition-all hover:shadow-2xl flex flex-col min-h-[280px] group relative">
+                      <div className="flex justify-between items-start mb-8">
+                        <span className="text-[9px] font-black uppercase tracking-[0.2em] px-3 py-1.5 bg-zinc-50 dark:bg-zinc-800 text-zinc-400 rounded-lg group-hover:bg-zinc-900 group-hover:text-white transition-colors">{card.category}</span>
+                        <div className="flex items-center gap-1 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity">
+                          <Button variant="ghost" size="sm" onClick={() => { setViewingCard(card); setIsFlipped(false); }} className="p-2" aria-label={t.library.quickPreview}>
+                            <Eye size={18} />
+                          </Button>
+                          <Button variant="ghost" size="sm" onClick={() => startEdit(card)} className="p-2" aria-label={t.library.update}>
+                            <Edit2 size={18} />
+                          </Button>
+                          <Button variant="ghost" size="sm" onClick={() => deleteCard(card.id)} className="p-2 hover:text-red-500" aria-label={t.common.delete}>
+                            <Trash2 size={18} />
+                          </Button>
+                        </div>
+                      </div>
+                      <h4 className="text-xl font-black text-zinc-900 dark:text-zinc-100 mb-4 line-clamp-3 leading-tight tracking-tight">{card.front}</h4>
+                      <p className="text-sm text-zinc-400 line-clamp-3 mb-12 flex-grow font-medium leading-relaxed">{card.back}</p>
+                      <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-widest text-zinc-300 dark:text-zinc-600 border-t border-zinc-50 dark:border-zinc-800 pt-6">
+                        <div className="flex items-center gap-2"><Zap size={12} fill="currentColor" /><span>Lv. {card.masteryLevel}</span></div>
+                        <span>{card.nextReviewAt ? new Date(card.nextReviewAt).toLocaleDateString() : t.dashboard.future}</span>
                       </div>
                     </div>
-                    <h4 className="text-xl font-black text-zinc-900 dark:text-zinc-100 mb-4 line-clamp-3 leading-tight tracking-tight">{card.front}</h4>
-                    <p className="text-sm text-zinc-400 line-clamp-3 mb-12 flex-grow font-medium leading-relaxed">{card.back}</p>
-                    <div className="flex items-center justify-between text-[10px] font-black uppercase tracking-widest text-zinc-300 dark:text-zinc-600 border-t border-zinc-50 dark:border-zinc-800 pt-6">
-                      <div className="flex items-center gap-2"><Zap size={12} fill="currentColor" /><span>Lv. {card.masteryLevel}</span></div>
-                      <span>{card.nextReviewAt ? new Date(card.nextReviewAt).toLocaleDateString() : t.dashboard.future}</span>
-                    </div>
-                  </div>
-                ))}
+                  ))}
+                </div>
               </div>
-            </div>
-          ))}
+            ))
+          )}
         </div>
       </div>
 
