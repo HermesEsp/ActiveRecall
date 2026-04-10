@@ -3,7 +3,7 @@ import {
   Plus, Search, Edit2, Trash2,
   Eye, Bold, Italic, Underline as UnderlineIcon, Code,
   Layers, Zap, Sparkles, MousePointer2, Scissors,
-  RotateCcw
+  RotateCcw, Download, Upload
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useMasteryStore } from '../../application/store/useMasteryStore';
@@ -53,16 +53,27 @@ interface DeckCardProps {
   category: string;
   count: number;
   onClick: () => void;
+  onExport: () => void;
 }
 
-const DeckCard: React.FC<DeckCardProps> = ({ category, count, onClick }) => (
-  <button
+const DeckCard: React.FC<DeckCardProps> = ({ category, count, onClick, onExport }) => (
+  <div
     onClick={onClick}
-    className="group relative bg-white dark:bg-zinc-900 rounded-xl border-2 border-zinc-100 dark:border-zinc-800 p-10 text-left hover:border-zinc-900 dark:hover:border-zinc-100 transition-all hover:shadow-2xl overflow-hidden"
+    className="group relative bg-white dark:bg-zinc-900 rounded-xl border-2 border-zinc-100 dark:border-zinc-800 p-10 text-left hover:border-zinc-900 dark:hover:border-zinc-100 transition-all hover:shadow-2xl overflow-hidden cursor-pointer"
   >
     {/* Stack Effect */}
     <div className="absolute top-0 left-0 w-full h-1 bg-zinc-200 dark:bg-zinc-800 translate-y-[-100%] group-hover:translate-y-0 transition-transform" />
     <div className="absolute top-0 left-0 w-full h-2 bg-zinc-100 dark:bg-zinc-800/50 translate-y-[-100%] group-hover:translate-y-[-50%] transition-transform delay-75" />
+
+    <div className="absolute top-4 right-4 z-20">
+      <button
+        onClick={(e) => { e.stopPropagation(); onExport(); }}
+        className="p-2 bg-white/50 dark:bg-zinc-900/50 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded-full text-zinc-400 hover:text-zinc-900 dark:hover:text-white transition-all shadow-sm"
+        title="Export Deck"
+      >
+        <Download size={16} />
+      </button>
+    </div>
 
     <div className="relative z-10">
       <div className="w-14 h-14 bg-zinc-50 dark:bg-zinc-800 rounded-xl flex items-center justify-center mb-8 border border-zinc-100 dark:border-zinc-700 group-hover:bg-zinc-900 dark:group-hover:bg-white group-hover:text-white dark:group-hover:text-zinc-900 transition-all shadow-inner">
@@ -79,7 +90,7 @@ const DeckCard: React.FC<DeckCardProps> = ({ category, count, onClick }) => (
     <div className="absolute right-0 bottom-0 opacity-[0.03] dark:opacity-[0.05] group-hover:opacity-[0.08] transition-opacity translate-x-1/4 translate-y-1/4">
       <Layers size={180} />
     </div>
-  </button>
+  </div>
 );
 
 export const LibraryPage: React.FC = () => {
@@ -99,8 +110,51 @@ export const LibraryPage: React.FC = () => {
 
   const frontRef = useRef<HTMLTextAreaElement>(null);
   const backRef = useRef<HTMLTextAreaElement>(null);
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const categories = getCategories();
+
+  const handleExportDeck = (category: string) => {
+    const data = useMasteryStore.getState().exportDeck(category);
+    const blob = new Blob([data], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `deck-${category.toLowerCase().replace(/\s+/g, '-')}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const handleExportCard = (id: string, frontContent: string) => {
+    const data = useMasteryStore.getState().exportCard(id);
+    const blob = new Blob([data], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    const nameSnippet = frontContent.substring(0, 10).toLowerCase().replace(/[^a-z0-9]/g, '-');
+    a.download = `card-${nameSnippet || id}.json`;
+    a.click();
+    URL.revokeObjectURL(url);
+  };
+
+  const handleImportFile = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const content = event.target?.result as string;
+      if (content) {
+        const success = useMasteryStore.getState().importCards(content);
+        if (success) {
+          alert(t.library.importSuccess || 'Import successful!');
+        } else {
+          alert(t.library.importError || 'Import failed. Invalid file format.');
+        }
+      }
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    };
+    reader.readAsText(file);
+  };
 
   const wrapSelection = (prefix: string, suffix: string, target: 'front' | 'back') => {
     const el = target === 'front' ? frontRef.current : backRef.current;
@@ -176,16 +230,38 @@ export const LibraryPage: React.FC = () => {
             <span>{t.library.count.replace('{count}', cards.length.toString())}</span>
           </div>
         </div>
-        {!isCreating && (
-          <Button
-            onClick={() => setIsCreating(true)}
-            size="lg"
-            className="shadow-2xl hover:scale-105 active:scale-95 transition-all"
-          >
-            <Plus size={20} strokeWidth={4} className="mr-3" />
-            {t.library.createButton}
-          </Button>
-        )}
+        <div className="flex gap-4 items-center">
+          <input
+            type="file"
+            accept=".json"
+            ref={fileInputRef}
+            onChange={handleImportFile}
+            className="hidden"
+          />
+          {!isCreating && (
+            <>
+              <Button
+                variant="outline"
+                onClick={() => fileInputRef.current?.click()}
+                size="lg"
+                className="shadow-sm hover:scale-105 active:scale-95 transition-all bg-white dark:bg-zinc-900 border-zinc-200 dark:border-zinc-800 group"
+              >
+                <Upload size={20} strokeWidth={3} className="mr-3 text-zinc-400 group-hover:text-zinc-900 dark:group-hover:text-white" />
+                <span className="hidden md:inline">{t.library.importData}</span>
+                <span className="md:hidden">Import</span>
+              </Button>
+              <Button
+                onClick={() => setIsCreating(true)}
+                size="lg"
+                className="shadow-2xl hover:scale-105 active:scale-95 transition-all"
+              >
+                <Plus size={20} strokeWidth={4} className="mr-3" />
+                <span className="hidden md:inline">{t.library.createButton}</span>
+                <span className="md:hidden">New</span>
+              </Button>
+            </>
+          )}
+        </div>
       </div>
 
       {/* Card Factory Section */}
@@ -340,6 +416,7 @@ export const LibraryPage: React.FC = () => {
                   category={category}
                   count={categoryCards.length}
                   onClick={() => setSelectedCategory(category)}
+                  onExport={() => handleExportDeck(category)}
                 />
               ))}
             </div>
@@ -363,6 +440,9 @@ export const LibraryPage: React.FC = () => {
                       <div className="flex justify-between items-start mb-8">
                         <span className="text-[9px] font-black uppercase tracking-[0.2em] px-3 py-1.5 bg-zinc-50 dark:bg-zinc-800 text-zinc-400 rounded-lg group-hover:bg-zinc-900 group-hover:text-white transition-colors">{card.category}</span>
                         <div className="flex items-center gap-1 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity">
+                          <Button variant="ghost" size="sm" onClick={() => handleExportCard(card.id, card.front)} className="p-2" aria-label={t.library.exportCard}>
+                            <Download size={18} />
+                          </Button>
                           <Button variant="ghost" size="sm" onClick={() => { setViewingCard(card); setIsFlipped(false); }} className="p-2" aria-label={t.library.quickPreview}>
                             <Eye size={18} />
                           </Button>

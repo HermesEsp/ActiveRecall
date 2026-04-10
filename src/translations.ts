@@ -79,7 +79,12 @@ export const translations = {
       code: 'Code',
       clozeLabel: 'Cloze',
       tapToFlip: 'Interact to reveal',
-      quickPreview: 'Factory Preview'
+      quickPreview: 'Factory Preview',
+      exportDeck: 'Export Deck',
+      exportCard: 'Export',
+      importData: 'Import Deck/Card',
+      importSuccess: 'Import successful.',
+      importError: 'Import failed. Invalid file.'
     },
     settings: {
       title: 'Control Center',
@@ -206,7 +211,12 @@ export const translations = {
       code: 'Código',
       clozeLabel: 'Cloze',
       tapToFlip: 'Interaja para revelar',
-      quickPreview: 'Prévia de Fábrica'
+      quickPreview: 'Prévia de Fábrica',
+      exportDeck: 'Exportar Deck',
+      exportCard: 'Exportar',
+      importData: 'Importar Deck/Card',
+      importSuccess: 'Importação concluída.',
+      importError: 'Falha na importação. Arquivo inválido.'
     },
     settings: {
       title: 'Centro de Controle',

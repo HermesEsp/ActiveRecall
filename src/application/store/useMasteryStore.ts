@@ -36,7 +36,9 @@ interface MasteryState {
   exportData: () => string;
   importData: (jsonData: string) => boolean;
   restoreTutorial: (lang: Language) => void;
-  resetAllData: (lang: Language) => void;
+  importCards: (jsonData: string) => boolean;
+  exportDeck: (category: string) => string;
+  exportCard: (id: string) => string;
 }
 
 const getInitialLanguage = (): Language => {
@@ -158,6 +160,48 @@ export const useMasteryStore = create<MasteryState>()(
             lastStudyDate: data.lastStudyDate || null,
             studyHistory: data.studyHistory || [],
           });
+          return true;
+        } catch (e) {
+          return false;
+        }
+      },
+      exportDeck: (category) => {
+        const state = get();
+        const deckCards = state.cards.filter(c => c.category === category);
+        return JSON.stringify({
+          cards: deckCards,
+          type: 'deck',
+          category,
+          version: '1.0.1'
+        }, null, 2);
+      },
+      exportCard: (id) => {
+        const state = get();
+        const card = state.cards.find(c => c.id === id);
+        return JSON.stringify({
+          cards: card ? [card] : [],
+          type: 'card',
+          version: '1.0.1'
+        }, null, 2);
+      },
+      importCards: (jsonData) => {
+        try {
+          const data = JSON.parse(jsonData);
+          if (!data.cards || !Array.isArray(data.cards)) return false;
+          
+          // Generate new IDs so they don't collide if it's a clone
+          const newCards = data.cards.map((c: any) => ({
+            ...c,
+            id: `card-${Date.now()}-${Math.random().toString(36).substring(2, 9)}`,
+            // Reset progression optionally, or keep? The user imports a deck, maybe we want to start fresh to study?
+            masteryLevel: 0,
+            lastReviewedAt: null,
+            nextReviewAt: null
+          }));
+
+          set((state) => ({
+            cards: [...state.cards, ...MigrationService.migrateAll(newCards)]
+          }));
           return true;
         } catch (e) {
           return false;
