@@ -5,7 +5,6 @@ import { DashboardPage } from './presentation/pages/DashboardPage';
 import { StudyPage } from './presentation/pages/StudyPage';
 import { LibraryPage } from './presentation/pages/LibraryPage';
 import { SettingsPage } from './presentation/pages/SettingsPage';
-import DesignSystemPage from './presentation/pages/DesignSystemPage';
 import { useMasteryStore } from './application/store/useMasteryStore';
 import { Button } from './presentation/components/ui/Button';
 
@@ -81,7 +80,6 @@ export default function App() {
             <Route path="settings" element={<SettingsPage />} />
             <Route path="*" element={<Navigate to="/dashboard" replace />} />
           </Route>
-          <Route path="design" element={<DesignSystemPage />} />
         </Routes>
       </BrowserRouter>
     </ErrorBoundary>
