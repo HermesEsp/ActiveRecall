@@ -60,7 +60,7 @@ const Modal: React.FC<ModalProps> = ({ open, title, message, confirmLabel = 'OK'
 };
 
 export const SettingsPage: React.FC = () => {
-  const { cards, t, language, setLanguage, theme, setTheme } = useMasteryStore();
+  const { cards, t, language, setLanguage, theme, setTheme, exportData, importData: importToStore } = useMasteryStore();
   const { isInstallable, install } = usePWAInstall();
   const [modal, setModal] = useState<Omit<ModalProps, 'onConfirm' | 'onCancel'> & { onConfirm: () => void } | null>(null);
 
@@ -77,32 +77,31 @@ export const SettingsPage: React.FC = () => {
     });
   };
 
-  const exportData = () => {
-    const data = JSON.stringify(cards, null, 2);
+  const handleExport = () => {
+    const data = exportData();
     const blob = new Blob([data], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `activerecall-backup-${new Date().toISOString().split('T')[0]}.json`;
+    a.download = `activerecall-v1-backup-${new Date().toISOString().split('T')[0]}.json`;
     a.click();
     URL.revokeObjectURL(url);
   };
 
-  const importData = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImport = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     const reader = new FileReader();
     reader.onload = (event) => {
       try {
-        const parsed = JSON.parse(event.target?.result as string);
-        if (isValidCardsArray(parsed)) {
-          useMasteryStore.setState({ cards: parsed });
-          showAlert('✓', language === 'pt' ? 'Dados importados com sucesso!' : 'Data imported successfully!');
+        const result = importToStore(event.target?.result as string);
+        if (result) {
+          showAlert('✓', language === 'pt' ? 'Dados restaurados com sucesso!' : 'Data restored successfully!');
         } else {
-          showAlert('Erro', language === 'pt' ? 'Arquivo de backup inválido.' : 'Invalid backup file.');
+          showAlert('Erro', language === 'pt' ? 'Arquivo de backup inválido ou corrompido.' : 'Invalid or corrupted backup file.');
         }
       } catch {
-        showAlert('Erro', language === 'pt' ? 'Arquivo de backup inválido.' : 'Invalid backup file.');
+        showAlert('Erro', language === 'pt' ? 'Falha ao processar o arquivo.' : 'Failed to process file.');
       }
     };
     reader.readAsText(file);
@@ -193,14 +192,14 @@ export const SettingsPage: React.FC = () => {
           <p className="text-sm text-zinc-500 mb-6 leading-relaxed">{t.settings.dataDesc}</p>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
             <button 
-              onClick={exportData}
+              onClick={handleExport}
               className="px-4 py-3 bg-zinc-900 dark:bg-white text-white dark:text-zinc-900 rounded-xl font-bold hover:bg-zinc-800 dark:hover:bg-zinc-200 transition-all text-center text-xs uppercase tracking-widest shadow-md active:scale-[0.98]"
             >
               {t.settings.export}
             </button>
             <label className="px-4 py-3 border border-zinc-200 dark:border-zinc-700 text-zinc-900 dark:text-zinc-100 rounded-xl font-bold hover:bg-zinc-50 dark:hover:bg-zinc-800 transition-all text-center cursor-pointer text-xs uppercase tracking-widest active:scale-[0.98]">
               {t.settings.import}
-              <input type="file" accept=".json" onChange={importData} className="hidden" />
+              <input type="file" accept=".json" onChange={handleImport} className="hidden" />
             </label>
           </div>
         </section>

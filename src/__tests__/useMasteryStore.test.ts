@@ -55,20 +55,18 @@ describe('useMasteryStore', () => {
     it('increases mastery level on success', () => {
       useMasteryStore.getState().addCard('Q', 'A', 'Test');
       const id = useMasteryStore.getState().cards[0].id;
-      useMasteryStore.getState().updateMastery(id, true);
-      expect(useMasteryStore.getState().cards[0].masteryLevel).toBe(1);
+      useMasteryStore.getState().updateMastery(id, 5);
+      expect(useMasteryStore.getState().cards[0].masteryLevel).toBe(5);
     });
 
     it('resets mastery to 0 on failure', () => {
       useMasteryStore.getState().addCard('Q', 'A', 'Test');
       const id = useMasteryStore.getState().cards[0].id;
-      // Level up to 3
-      useMasteryStore.getState().updateMastery(id, true);
-      useMasteryStore.getState().updateMastery(id, true);
-      useMasteryStore.getState().updateMastery(id, true);
-      expect(useMasteryStore.getState().cards[0].masteryLevel).toBe(3);
+      // Level up
+      useMasteryStore.getState().updateMastery(id, 5);
+      expect(useMasteryStore.getState().cards[0].masteryLevel).toBe(5);
       // Fail — back to 0
-      useMasteryStore.getState().updateMastery(id, false);
+      useMasteryStore.getState().updateMastery(id, 0);
       expect(useMasteryStore.getState().cards[0].masteryLevel).toBe(0);
     });
 
@@ -76,7 +74,7 @@ describe('useMasteryStore', () => {
       useMasteryStore.getState().addCard('Q', 'A', 'Test');
       const id = useMasteryStore.getState().cards[0].id;
       for (let i = 0; i < 10; i++) {
-        useMasteryStore.getState().updateMastery(id, true);
+        useMasteryStore.getState().updateMastery(id, 5);
       }
       expect(useMasteryStore.getState().cards[0].masteryLevel).toBe(5);
     });
@@ -85,7 +83,7 @@ describe('useMasteryStore', () => {
       useMasteryStore.getState().addCard('Q', 'A', 'Test');
       const id = useMasteryStore.getState().cards[0].id;
       const before = Date.now();
-      useMasteryStore.getState().updateMastery(id, true);
+      useMasteryStore.getState().updateMastery(id, 5);
       const card = useMasteryStore.getState().cards[0];
       // Level 1 = 1 day interval
       const expectedInterval = 1 * 24 * 60 * 60 * 1000;
@@ -113,7 +111,7 @@ describe('useMasteryStore', () => {
     it('excludes cards not yet due', () => {
       useMasteryStore.getState().addCard('Q', 'A', 'Test');
       const id = useMasteryStore.getState().cards[0].id;
-      useMasteryStore.getState().updateMastery(id, true);
+      useMasteryStore.getState().updateMastery(id, 5);
       // Card is now level 1 with 1-day interval — should not be due
       const due = useMasteryStore.getState().getStudyCards('All');
       expect(due).toHaveLength(0);
@@ -124,7 +122,7 @@ describe('useMasteryStore', () => {
     it('starts streak at 1 on first study', () => {
       useMasteryStore.getState().addCard('Q', 'A', 'Test');
       const id = useMasteryStore.getState().cards[0].id;
-      useMasteryStore.getState().updateMastery(id, true);
+      useMasteryStore.getState().updateMastery(id, 5);
       expect(useMasteryStore.getState().streak).toBe(1);
     });
 
@@ -132,8 +130,8 @@ describe('useMasteryStore', () => {
       useMasteryStore.getState().addCard('Q1', 'A1', 'Test');
       useMasteryStore.getState().addCard('Q2', 'A2', 'Test');
       const [c1, c2] = useMasteryStore.getState().cards;
-      useMasteryStore.getState().updateMastery(c1.id, true);
-      useMasteryStore.getState().updateMastery(c2.id, true);
+      useMasteryStore.getState().updateMastery(c1.id, 5);
+      useMasteryStore.getState().updateMastery(c2.id, 5);
       expect(useMasteryStore.getState().streak).toBe(1);
     });
   });
@@ -152,7 +150,7 @@ describe('useMasteryStore', () => {
     it('records study history entries', () => {
       useMasteryStore.getState().addCard('Q', 'A', 'Test');
       const id = useMasteryStore.getState().cards[0].id;
-      useMasteryStore.getState().updateMastery(id, true);
+      useMasteryStore.getState().updateMastery(id, 5);
       const history = useMasteryStore.getState().studyHistory;
       expect(history).toHaveLength(1);
       expect(history[0].count).toBe(1);
@@ -162,8 +160,8 @@ describe('useMasteryStore', () => {
       useMasteryStore.getState().addCard('Q1', 'A1', 'Test');
       useMasteryStore.getState().addCard('Q2', 'A2', 'Test');
       const [c1, c2] = useMasteryStore.getState().cards;
-      useMasteryStore.getState().updateMastery(c1.id, true);
-      useMasteryStore.getState().updateMastery(c2.id, false);
+      useMasteryStore.getState().updateMastery(c1.id, 5);
+      useMasteryStore.getState().updateMastery(c2.id, 0);
       expect(useMasteryStore.getState().studyHistory[0].count).toBe(2);
     });
   });

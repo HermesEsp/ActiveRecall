@@ -11,4 +11,10 @@ export interface Flashcard {
   lastReviewedAt: number | null;
   nextReviewAt: number | null;
   type: FlashcardType;
+
+  // SRS Metadata (Transitional)
+  repetitionCount?: number;
+  easeFactor?: number;
+  interval?: number;
+  srsVersion?: number;
 }
